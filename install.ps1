@@ -1,6 +1,6 @@
 ﻿<#
-  DeepSeek Harness 开屏动画插件 · 一键安装脚本
-  作者：抖音 @孤影      赞助 / 技术支持：跃数AI中转站 ys666.site
+  DeepSeek Harness 皮肤（HARNESS OS 开屏动画）· 一键安装脚本
+  作者：抖音 @孤影
 
   用法（在仓库根目录执行）：
     powershell -NoProfile -ExecutionPolicy Bypass -File .\install.ps1
@@ -9,7 +9,7 @@
 
   参数：
     -Profile <name>  装到哪个 profile（默认自动：有 desktop 用 desktop，否则 web）
-    -Dsh <path>      手动指定 dsh.cmd 的完整路径（便携版/自定义安装位置用）
+    -Dsh <path>      手动指定 dsh.cmd 的完整路径（便携版 / 自定义安装位置用）
 #>
 param(
   [string]$Profile = '',
@@ -24,8 +24,8 @@ function Warn ($m) { Write-Host $m -ForegroundColor Yellow }
 
 Say ""
 Say "=============================================="
-Say "  DSH 开屏动画 安装器  ·  作者：抖音 @孤影"
-Say "  赞助：跃数AI中转站  ys666.site"
+Say "  DeepSeek Harness 皮肤 · 开屏动画"
+Say "  作者：抖音 @孤影"
 Say "=============================================="
 Say ""
 
@@ -127,8 +127,7 @@ if ($LASTEXITCODE -ne 0) {
 
 Say ""
 Ok "=============================================="
-Ok "  安装完成！作者：抖音 @孤影"
-Ok "  赞助：跃数AI中转站  ys666.site"
+Ok "  安装完成！"
 Ok "=============================================="
 Write-Host ""
 Write-Host "下一步（很重要）：" -ForegroundColor Yellow
@@ -136,6 +135,6 @@ Write-Host "  1. 完全退出 DSH —— 关掉主窗口后，还要到右下角
 Write-Host "  2. 重新打开 DSH，开机动画就会播放。" -ForegroundColor Yellow
 Write-Host ""
 Write-Host "播放时：点击屏幕 = 下一幕，Esc = 跳过。" -ForegroundColor Gray
-Write-Host "想调音量/全屏/时长：DSH 里打开 设置 → 开屏动画。" -ForegroundColor Gray
+Write-Host "想调音量 / 全屏 / 时长：DSH 里打开 设置 → 开屏动画。" -ForegroundColor Gray
 Write-Host "想换音乐：替换插件目录 assets\splash.m4a 后重启 DSH。" -ForegroundColor Gray
 Write-Host ""

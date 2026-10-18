@@ -113,7 +113,7 @@ node tools/embed-whale.mjs   # 改过 assets/whale-path.txt 后重新嵌入
 
 ## 版权
 
-- 作者：**抖音 @孤影**　赞助 / 技术支持：**跃数AI中转站 · [ys666.site](https://ys666.site)**
+- 作者：**抖音 @孤影**
 - 鲸鱼路径取自 [DeepSeek 官方标志](https://commons.wikimedia.org/wiki/File:DeepSeek_logo.svg) 中的鲸鱼图形（品牌标识，本插件仅作个人开屏动画使用）。
 - 开屏音轨为插件自带素材，如需再分发请替换成自己的音轨。
 - 插件代码 MIT。

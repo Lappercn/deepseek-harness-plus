@@ -1074,7 +1074,7 @@ window.__ModuleLoader__.load({
         h(
           "div",
           { style: ui.footer },
-          "开屏动画插件 · 作者：抖音@孤影 · 赞助商：跃数AI中转站 ys666.site",
+          "开屏动画皮肤 · 作者：抖音 @孤影",
         ),
       );
     }
