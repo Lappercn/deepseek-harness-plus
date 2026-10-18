@@ -6,6 +6,8 @@
 
 `v1.1.1` · `Windows` · `MIT` · 作者 **抖音 @孤影**
 
+<img src="docs/preview.png" alt="DeepSeek Harness 皮肤 · 开屏动画预览" width="100%">
+
 </div>
 
 ---
@@ -226,9 +228,11 @@ dsh plugin --profile desktop add "file:<仓库目录>/release/dsh-whale-splash-1
 ```
 deepseek-harness-plus/
 ├─ README.md                        ← 你正在看的这份说明
+├─ CHANGELOG.md                     ← 更新日志
 ├─ AGENTS.md                        ← 写给 AI 的安装说明（丢给 AI 用）
 ├─ 一键安装.bat                      ← 小白双击这个
 ├─ install.ps1                      ← 安装脚本（支持官方版 / 便携版）
+├─ docs/preview.png                 ← 开屏四幕效果预览
 ├─ release/
 │  └─ dsh-whale-splash-1.1.1.tgz    ← 打包好的皮肤
 └─ plugin/                          ← 源码（想改就改这里）
@@ -245,7 +249,7 @@ deepseek-harness-plus/
 
 ## 📄 关于
 
-作者 **抖音 @孤影**　·　皮肤代码 [MIT](LICENSE) 开源，欢迎二改
+作者 **抖音 @孤影**　·　皮肤代码 [MIT](LICENSE) 开源，欢迎二改　·　版本变更见 [CHANGELOG.md](CHANGELOG.md)
 
 鲸鱼图形取自 DeepSeek 官方标志（品牌标识），本项目与深度求索官方无关，不代表官方立场
 
