@@ -5,8 +5,10 @@
 **HARNESS OS 开机动画 —— 打开 DSH，先看一场 16 秒的开机自检**
 
 `v1.1.1` · `Windows` · `MIT` · 作者 **抖音 @孤影**
+![输入图片说明](docs/image.png)
 
 <img src="docs/preview.png" alt="DeepSeek Harness 皮肤 · 开屏动画预览" width="100%">
+![输入图片说明](plugin/assets/image.png)
 
 </div>
 
@@ -19,7 +21,7 @@
 黑底 HUD、四角边框、等宽小字、英文打字机、读取条、核验圆环、背景音轨一应俱全；开屏期间自动全屏并隐藏右上角那几个白色窗口按钮，播完原样恢复。
 
 > 皮肤只改「开机动画」这一件事，**不碰你的聊天记录、模型配置和 API Key**。
-
+![输入图片说明](docs/image.png)
 ---
 
 ## 🎬 效果
