@@ -5,10 +5,10 @@
 **HARNESS OS 开机动画 —— 打开 DSH，先看一场 16 秒的开机自检**
 
 `v1.1.1` · `Windows` · `MIT` · 作者 **抖音 @孤影**
-![输入图片说明](docs/image.png)
+
 
 <img src="docs/preview.png" alt="DeepSeek Harness 皮肤 · 开屏动画预览" width="100%">
-![输入图片说明](plugin/assets/image.png)
+
 
 </div>
 
