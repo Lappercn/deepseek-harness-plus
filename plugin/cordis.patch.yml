@@ -1,0 +1,9 @@
+# dsh-whale-splash bundle patch.
+#
+# 宿主半边只做两件事：
+#   1. GET /whale-splash/audio     把 assets/splash.m4a 用 Range 流式发给浏览器；
+#   2. GET/PUT /whale-splash/settings 读写 ~/.dsh-whale-splash/config.json。
+# 开屏画面本身由 package.json 里 `dsh.client` 声明的浏览器半边绘制。
+- insert:
+    - id: whale-splash
+      name: 'dsh-whale-splash'
