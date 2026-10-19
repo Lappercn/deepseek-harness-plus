@@ -983,22 +983,20 @@ window.__ModuleLoader__.load({
 
       document.body.appendChild(overlay);
 
-      // 请求全屏与深色标题栏
+      // 请求深色标题栏（不做窗口全屏操作，overlay 本身 fixed+inset:0 已经覆盖整个窗口）
       void fetch("/whale-splash/window", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ mode: "splash", fullscreen: cfg.fullscreen === true }),
+        body: JSON.stringify({ mode: "splash", fullscreen: false }),
       })
         .then((res) => (res.ok ? res.json() : { electron: false }))
         .then((info) => {
           if (info && info.electron) {
             state.hostWindow = true;
-            return null;
           }
-          applyClientFullscreen(state, overlay, cfg);
           return null;
         })
-        .catch(() => applyClientFullscreen(state, overlay, cfg));
+        .catch(() => {});
 
       current = state;
       return state;
