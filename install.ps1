@@ -1,16 +1,11 @@
 ﻿<#
-  DeepSeek Harness 皮肤（HARNESS OS 开屏动画）· 一键安装脚本
-  作者：抖音 @孤影
+  DeepSeek Harness 鐨偆锛圚ARNESS OS 寮€灞忓姩鐢伙級路 涓€閿畨瑁呰剼鏈?  浣滆€咃細鎶栭煶 @瀛ゅ奖
 
-  用法（在仓库根目录执行）：
-    powershell -NoProfile -ExecutionPolicy Bypass -File .\install.ps1
+  鐢ㄦ硶锛堝湪浠撳簱鏍圭洰褰曟墽琛岋級锛?    powershell -NoProfile -ExecutionPolicy Bypass -File .\install.ps1
     powershell -NoProfile -ExecutionPolicy Bypass -File .\install.ps1 -Profile web
     powershell -NoProfile -ExecutionPolicy Bypass -File .\install.ps1 -Dsh "D:\deepseek\resources\runtime\cli\bin\dsh.cmd"
 
-  参数：
-    -Profile <name>  装到哪个 profile（默认自动：有 desktop 用 desktop，否则 web）
-    -Dsh <path>      手动指定 dsh.cmd 的完整路径（便携版 / 自定义安装位置用）
-#>
+  鍙傛暟锛?    -Profile <name>  瑁呭埌鍝釜 profile锛堥粯璁よ嚜鍔細鏈?desktop 鐢?desktop锛屽惁鍒?web锛?    -Dsh <path>      鎵嬪姩鎸囧畾 dsh.cmd 鐨勫畬鏁磋矾寰勶紙渚挎惡鐗?/ 鑷畾涔夊畨瑁呬綅缃敤锛?#>
 param(
   [string]$Profile = '',
   [string]$Dsh = ''
@@ -24,8 +19,8 @@ function Warn ($m) { Write-Host $m -ForegroundColor Yellow }
 
 Say ""
 Say "=============================================="
-Say "  DeepSeek Harness 皮肤 · 开屏动画"
-Say "  作者：抖音 @孤影"
+Say "  DeepSeek Harness 鐨偆 路 寮€灞忓姩鐢?
+Say "  浣滆€咃細鎶栭煶 @瀛ゅ奖"
 Say "=============================================="
 Say ""
 
@@ -34,23 +29,23 @@ $releaseDir = Join-Path $here 'release'
 $tgz = Get-ChildItem $releaseDir -Filter 'dsh-whale-splash-*.tgz' -ErrorAction SilentlyContinue |
   Sort-Object Name -Descending | Select-Object -First 1
 if (-not $tgz) {
-  throw "找不到安装包：$releaseDir\dsh-whale-splash-*.tgz`n请确认下载的是【完整仓库】（含 release 文件夹），而不是单独一个文件。"
+  throw "鎵句笉鍒板畨瑁呭寘锛?releaseDir\dsh-whale-splash-*.tgz`n璇风‘璁や笅杞界殑鏄€愬畬鏁翠粨搴撱€戯紙鍚?release 鏂囦欢澶癸級锛岃€屼笉鏄崟鐙竴涓枃浠躲€?
 }
-Say "安装包：$($tgz.Name)"
+Say "瀹夎鍖咃細$($tgz.Name)"
 
-# ── 1. 找 dsh 命令 ────────────────────────────────────────────────────────────
+# 鈹€鈹€ 1. 鎵?dsh 鍛戒护 鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€
 function Find-DshCli {
   param([string]$Explicit)
 
   if ($Explicit) {
     if (Test-Path $Explicit) { return (Resolve-Path $Explicit).Path }
-    throw "你指定的 dsh 不存在：$Explicit"
+    throw "浣犳寚瀹氱殑 dsh 涓嶅瓨鍦細$Explicit"
   }
 
   $cands = New-Object System.Collections.Generic.List[string]
   if ($env:DSH_CLI) { $cands.Add($env:DSH_CLI) }
 
-  # 官方默认安装位置
+  # 瀹樻柟榛樿瀹夎浣嶇疆
   $roots = @($env:LOCALAPPDATA, $env:ProgramFiles, ${env:ProgramFiles(x86)}, $env:APPDATA)
   foreach ($root in $roots) {
     if (-not $root) { continue }
@@ -60,8 +55,7 @@ function Find-DshCli {
     }
   }
 
-  # 便携版：常见目录名放在任意盘的根目录下
-  foreach ($drive in (Get-PSDrive -PSProvider FileSystem -ErrorAction SilentlyContinue).Name) {
+  # 渚挎惡鐗堬細甯歌鐩綍鍚嶆斁鍦ㄤ换鎰忕洏鐨勬牴鐩綍涓?  foreach ($drive in (Get-PSDrive -PSProvider FileSystem -ErrorAction SilentlyContinue).Name) {
     foreach ($folder in @('deepseek', 'DeepSeek Harness', 'DeepSeekHarness', 'DSH', 'dsh')) {
       $cands.Add("${drive}:\$folder\resources\runtime\cli\bin\dsh.cmd")
     }
@@ -71,8 +65,7 @@ function Find-DshCli {
     if ($c -and (Test-Path $c)) { return $c }
   }
 
-  # %LOCALAPPDATA%\Programs 下扫一层目录
-  $progRoot = Join-Path $env:LOCALAPPDATA 'Programs'
+  # %LOCALAPPDATA%\Programs 涓嬫壂涓€灞傜洰褰?  $progRoot = Join-Path $env:LOCALAPPDATA 'Programs'
   if (Test-Path $progRoot) {
     $hit = Get-ChildItem $progRoot -Directory -ErrorAction SilentlyContinue |
       ForEach-Object { Join-Path $_.FullName 'resources\runtime\cli\bin\dsh.cmd' } |
@@ -81,7 +74,7 @@ function Find-DshCli {
     if ($hit) { return $hit }
   }
 
-  # PATH 里的 dsh
+  # PATH 閲岀殑 dsh
   $cmd = Get-Command dsh -ErrorAction SilentlyContinue
   if ($cmd) { return $cmd.Source }
 
@@ -91,50 +84,48 @@ function Find-DshCli {
 $cli = Find-DshCli -Explicit $Dsh
 if (-not $cli) {
   Warn ""
-  Warn "× 没找到 dsh 命令。"
+  Warn "脳 娌℃壘鍒?dsh 鍛戒护銆?
   Warn ""
   Write-Host @"
-你的 DSH 可能装在自定义位置（比如便携版）。请把 dsh.cmd 的完整路径告诉脚本，例如：
-
+浣犵殑 DSH 鍙兘瑁呭湪鑷畾涔変綅缃紙姣斿渚挎惡鐗堬級銆傝鎶?dsh.cmd 鐨勫畬鏁磋矾寰勫憡璇夎剼鏈紝渚嬪锛?
   powershell -NoProfile -ExecutionPolicy Bypass -File .\install.ps1 -Dsh "D:\deepseek\resources\runtime\cli\bin\dsh.cmd"
 
-dsh.cmd 就在你安装 DSH 的目录里，路径特征是：
-  …\resources\runtime\cli\bin\dsh.cmd
+dsh.cmd 灏卞湪浣犲畨瑁?DSH 鐨勭洰褰曢噷锛岃矾寰勭壒寰佹槸锛?  鈥resources\runtime\cli\bin\dsh.cmd
 "@
   exit 1
 }
-Ok "√ 找到 dsh：$cli"
+Ok "鈭?鎵惧埌 dsh锛?cli"
 
-# ── 2. 选 profile ────────────────────────────────────────────────────────────
+# 鈹€鈹€ 2. 閫?profile 鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€
 $profilesDir = Join-Path $env:USERPROFILE '.dsh\profiles'
 if (-not $Profile) {
   if (Test-Path (Join-Path $profilesDir 'desktop')) { $Profile = 'desktop' }
   elseif (Test-Path (Join-Path $profilesDir 'web')) { $Profile = 'web' }
   else { $Profile = 'desktop' }
 }
-Ok "√ 安装到 profile：$Profile"
+Ok "鈭?瀹夎鍒?profile锛?Profile"
 
-# ── 3. 安装 ─────────────────────────────────────────────────────────────────
+# 鈹€鈹€ 3. 瀹夎 鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€
 $uri = 'file:' + ($tgz.FullName -replace '\\', '/')
 Say ""
-Say "正在安装，请稍候…"
+Say "姝ｅ湪瀹夎锛岃绋嶅€欌€?
 Say ""
 
 & $cli plugin --profile $Profile add $uri
 if ($LASTEXITCODE -ne 0) {
-  throw "安装失败（退出码 $LASTEXITCODE）。可以把上面的报错截图发给作者（抖音 @孤影）。"
+  throw "瀹夎澶辫触锛堥€€鍑虹爜 $LASTEXITCODE锛夈€傚彲浠ユ妸涓婇潰鐨勬姤閿欐埅鍥惧彂缁欎綔鑰咃紙鎶栭煶 @瀛ゅ奖锛夈€?
 }
 
 Say ""
 Ok "=============================================="
-Ok "  安装完成！"
+Ok "  瀹夎瀹屾垚锛?
 Ok "=============================================="
 Write-Host ""
-Write-Host "下一步（很重要）：" -ForegroundColor Yellow
-Write-Host "  1. 完全退出 DSH —— 关掉主窗口后，还要到右下角【系统托盘】右键图标退出；" -ForegroundColor Yellow
-Write-Host "  2. 重新打开 DSH，开机动画就会播放。" -ForegroundColor Yellow
+Write-Host "涓嬩竴姝ワ紙寰堥噸瑕侊級锛? -ForegroundColor Yellow
+Write-Host "  1. 瀹屽叏閫€鍑?DSH 鈥斺€?鍏虫帀涓荤獥鍙ｅ悗锛岃繕瑕佸埌鍙充笅瑙掋€愮郴缁熸墭鐩樸€戝彸閿浘鏍囬€€鍑猴紱" -ForegroundColor Yellow
+Write-Host "  2. 閲嶆柊鎵撳紑 DSH锛屽紑鏈哄姩鐢诲氨浼氭挱鏀俱€? -ForegroundColor Yellow
 Write-Host ""
-Write-Host "播放时：点击屏幕 = 下一幕，Esc = 跳过。" -ForegroundColor Gray
-Write-Host "想调音量 / 全屏 / 时长：DSH 里打开 设置 → 开屏动画。" -ForegroundColor Gray
-Write-Host "想换音乐：替换插件目录 assets\splash.m4a 后重启 DSH。" -ForegroundColor Gray
+Write-Host "鎾斁鏃讹細鐐瑰嚮灞忓箷 = 涓嬩竴骞曪紝Esc = 璺宠繃銆? -ForegroundColor Gray
+Write-Host "鎯宠皟闊抽噺 / 鍏ㄥ睆 / 鍒囨崲椋庢牸 / DIY瑙嗛锛欴SH 閲屾墦寮€ 璁剧疆 鈫?寮€灞忓姩鐢汇€? -ForegroundColor Gray
+Write-Host "瑙嗛鐩綍锛殈/.dsh-whale-splash/videos (鏀惧叆浠绘剰 mp4 鍗冲彲鐩存帴閫夋嫨)" -ForegroundColor Gray
 Write-Host ""

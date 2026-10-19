@@ -27,10 +27,11 @@ window.__ModuleLoader__.load({
 
     const DEFAULTS = {
       enabled: true,
-      mode: "full", // full = 整段开机过场；logo = 只放鲸鱼标志
-      fullscreen: true, // 开屏时进入全屏，隐藏右上角白色的窗口按钮
+      mode: "full", // full = 完整过场 / 视频; logo = 仅Logo
+      theme: "red_eyes", // red_eyes | blue_eyes | default | custom
+      fullscreen: true,
       sound: true,
-      volume: 0.65,
+      volume: 0.75,
       showHint: true,
     };
 
@@ -41,7 +42,8 @@ window.__ModuleLoader__.load({
       const merged = Object.assign({}, DEFAULTS, base || {});
       return {
         enabled: typeof src.enabled === "boolean" ? src.enabled : merged.enabled,
-        mode: src.mode === "logo" || src.mode === "full" ? src.mode : merged.mode,
+        mode: ["logo", "full", "video"].includes(src.mode) ? src.mode : merged.mode,
+        theme: typeof src.theme === "string" && src.theme ? src.theme : (merged.theme || "red_eyes"),
         fullscreen: typeof src.fullscreen === "boolean" ? src.fullscreen : merged.fullscreen,
         sound: typeof src.sound === "boolean" ? src.sound : merged.sound,
         volume: clamp(Number(src.volume) || 0, 0, 1) || merged.volume,
@@ -142,6 +144,18 @@ window.__ModuleLoader__.load({
 
     // ── 样式 ────────────────────────────────────────────────────────────────────
     const CSS = `
+      /* 视频开机动画全屏容器 */
+      .ws-video-wrap {
+        position: absolute; inset: 0;
+        display: flex; align-items: center; justify-content: center;
+        background: #000; overflow: hidden;
+      }
+      .ws-video-media {
+        width: 100%; height: 100%;
+        object-fit: cover;
+        background: #000;
+      }
+
       .ws-cine {
         position: fixed; inset: 0; z-index: 2147483600;
         background: #000; color: #e8f0f8;
@@ -835,6 +849,153 @@ window.__ModuleLoader__.load({
       }
     }
 
+
+    function buildVideoSplash(cfg) {
+      const overlay = document.createElement("div");
+      overlay.className = "ws-cine";
+      overlay.id = "dsh-whale-splash";
+
+      const wrap = document.createElement("div");
+      wrap.className = "ws-video-wrap";
+
+      const video = document.createElement("video");
+      video.className = "ws-video-media";
+      video.autoplay = true;
+      video.playsInline = true;
+      video.controls = false;
+      video.preload = "auto";
+      video.muted = !cfg.sound;
+      video.volume = cfg.volume !== undefined ? cfg.volume : 0.75;
+
+      const themeQuery = cfg.theme ? ("?theme=" + encodeURIComponent(cfg.theme)) : "";
+      video.src = "/whale-splash/video" + themeQuery;
+
+      wrap.appendChild(video);
+      overlay.appendChild(wrap);
+
+      if (cfg.showHint) {
+        const skip = document.createElement("button");
+        skip.type = "button";
+        skip.className = "ws-skip";
+        skip.textContent = "跳过开屏  ESC";
+        skip.style.zIndex = "999";
+        overlay.appendChild(skip);
+      }
+
+      const state = {
+        overlay,
+        finished: false,
+        video,
+        timers: [],
+        enteredFullscreen: false,
+        fullscreenRetry: null,
+        hostWindow: false,
+      };
+
+      let keyHandler = null;
+
+      function cleanup() {
+        for (const t of state.timers) clearTimeout(t);
+        state.timers = [];
+        try {
+          video.pause();
+          video.src = "";
+          video.load();
+        } catch {}
+        if (overlay.parentNode) overlay.parentNode.removeChild(overlay);
+        if (current === state) current = null;
+        if (keyHandler) document.removeEventListener("keydown", keyHandler, true);
+        if (state.fullscreenRetry) {
+          window.removeEventListener("pointerdown", state.fullscreenRetry, true);
+          document.removeEventListener("keydown", state.fullscreenRetry, true);
+          state.fullscreenRetry = null;
+        }
+        if (state.hostWindow) {
+          try {
+            fetch("/whale-splash/window", {
+              method: "POST",
+              headers: { "Content-Type": "application/json" },
+              body: JSON.stringify({ mode: "restore" }),
+              keepalive: true,
+            }).catch(() => {});
+          } catch {}
+        }
+        if (state.enteredFullscreen && typeof document.exitFullscreen === "function" && document.fullscreenElement) {
+          try {
+            const result = document.exitFullscreen();
+            if (result && typeof result.catch === "function") result.catch(() => {});
+          } catch {}
+        }
+      }
+
+      function finish(reason) {
+        if (state.finished) return;
+        state.finished = true;
+        overlay.classList.add("is-out");
+        const t = setTimeout(cleanup, 240);
+        state.timers.push(t);
+      }
+      state.finish = finish;
+
+      keyHandler = (e) => {
+        if (e.key === "Escape" || e.code === "Escape") {
+          e.preventDefault();
+          e.stopPropagation();
+          finish("esc");
+        }
+      };
+      document.addEventListener("keydown", keyHandler, true);
+
+      overlay.addEventListener("click", () => {
+        finish("click");
+      });
+
+      video.addEventListener("ended", () => {
+        finish("video_ended");
+      });
+
+      video.addEventListener("error", () => {
+        console.warn("[whale-splash] video error, finishing");
+        finish("video_error");
+      });
+
+      // 尝试自动播放（处理可能的手势限制）
+      const playPromise = video.play();
+      if (playPromise && typeof playPromise.catch === "function") {
+        playPromise.catch(() => {
+          const kick = () => {
+            video.play().catch(() => {});
+            window.removeEventListener("pointerdown", kick, true);
+            document.removeEventListener("keydown", kick, true);
+          };
+          window.addEventListener("pointerdown", kick, true);
+          document.addEventListener("keydown", kick, true);
+        });
+      }
+
+      document.body.appendChild(overlay);
+
+      // 请求全屏与深色标题栏
+      void fetch("/whale-splash/window", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ mode: "splash", fullscreen: cfg.fullscreen === true }),
+      })
+        .then((res) => (res.ok ? res.json() : { electron: false }))
+        .then((info) => {
+          if (info && info.electron) {
+            state.hostWindow = true;
+            return null;
+          }
+          applyClientFullscreen(state, overlay, cfg);
+          return null;
+        })
+        .catch(() => applyClientFullscreen(state, overlay, cfg));
+
+      current = state;
+      return state;
+    }
+
     function playSplash(force) {
       if (typeof document === "undefined" || !document.body) return;
       injectCss();
@@ -845,8 +1006,12 @@ window.__ModuleLoader__.load({
         if (hasPlayedThisSession()) return; // 本次启动已经播过，别再重来一遍
       }
       markPlayed();
-      // 不等宿主设置接口：先用本地值立刻开演，避免开头几百毫秒的黑屏/延迟。
-      buildCinematic(cfg);
+      // 根据 theme 判断：如果是 default 则播放 SVG 逐帧自检，否则播放超燃机能视频
+      if (cfg.theme && cfg.theme !== "default") {
+        buildVideoSplash(cfg);
+      } else {
+        buildCinematic(cfg);
+      }
       if (!force) {
         void fetchRemote(400).then((remote) => {
           if (!remote.enabled && current) current.finish("disabled");
@@ -945,17 +1110,38 @@ window.__ModuleLoader__.load({
       );
     }
 
+    const DEFAULT_THEMES = [
+      { id: "red_eyes", label: "🔥 超燃写轮眼", hint: "跃数AI·千人稳定中转·黑红机能流光 (7.8秒)" },
+      { id: "blue_eyes", label: "❄️ 苍天之瞳", hint: "五条悟·无量空处·电光苍眸 (3.4秒)" },
+      { id: "default", label: "🐳 经典科技蓝鲸", hint: "HARNESS OS 原生 SVG 自检过场 (16秒)" },
+    ];
+
     const MODES = [
-      { id: "full", label: "完整开屏", hint: "HARNESS OS 开机过场（约 19 秒）" },
-      { id: "logo", label: "仅 Logo", hint: "只放鲸鱼标志（约 3 秒）" },
+      { id: "full", label: "完整开屏", hint: "播放完整开屏动画或超燃视频" },
+      { id: "logo", label: "仅 Logo", hint: "只放鲸鱼标志（仅在经典蓝鲸模式下生效）" },
     ];
 
     function SettingsSection() {
       const [state, setState] = React.useState(settings);
+      const [themes, setThemes] = React.useState(DEFAULT_THEMES);
+      const [userDir, setUserDir] = React.useState("~/.dsh-whale-splash/videos");
+
       React.useEffect(() => {
         const fn = (next) => setState(next);
         listeners.add(fn);
         setState(settings);
+
+        // 获取可用视频列表
+        fetch("/whale-splash/videos")
+          .then((r) => r.ok ? r.json() : null)
+          .then((data) => {
+            if (data && Array.isArray(data.videos)) {
+              setThemes(data.videos);
+              if (data.userDir) setUserDir(data.userDir);
+            }
+          })
+          .catch(() => {});
+
         return () => listeners.delete(fn);
       }, []);
 
@@ -963,6 +1149,8 @@ window.__ModuleLoader__.load({
         const next = updateSettings(value);
         setState(next);
       };
+
+      const currentTheme = state.theme || "red_eyes";
 
       return h(
         "div",
@@ -972,9 +1160,34 @@ window.__ModuleLoader__.load({
           { style: ui.hero },
           h("div", { style: ui.heroGlow }),
           h("div", { style: ui.heroTitle }, "开屏动画"),
-          h("div", { style: ui.heroSub }, "HARNESS OS 开机过场：鲸鱼标志 → 访问许可 → 身份确认 → 读取权限 → 核验通过。"),
+          h("div", { style: ui.heroSub }, "HARNESS OS 开机动画：支持超燃写轮眼、苍天之瞳、经典蓝鲸与任意自定义视频。"),
         ),
 
+        // 核心选择：开屏风格 / 视频主题
+        h(
+          "div",
+          { style: ui.card },
+          h("div", { style: ui.label }, "🎬 开机动画风格 / 视频主题"),
+          h("div", { style: Object.assign({}, ui.hint, { marginBottom: 12 }) }, "点击即可切换开机动画风格，支持放任意 mp4/webm 视频文件到用户视频目录。"),
+          h(
+            "div",
+            { style: ui.chips },
+            ...themes.map((th) =>
+              h(
+                "button",
+                {
+                  key: th.id, type: "button",
+                  style: Object.assign({}, ui.chip, currentTheme === th.id ? ui.chipActive : {}),
+                  onClick: () => patch({ theme: th.id }),
+                },
+                h("div", { style: ui.chipTitle }, th.label),
+                h("div", { style: ui.chipHint }, th.hint || (th.custom ? "自定义本地视频" : "")),
+              ),
+            ),
+          ),
+        ),
+
+        // 基础开关
         h(
           "div",
           { style: ui.card },
@@ -995,8 +1208,8 @@ window.__ModuleLoader__.load({
             h(
               "div",
               null,
-              h("div", { style: ui.label }, "播放声音"),
-              h("div", { style: ui.hint }, "插件自带 assets/splash.m4a（可替换）。"),
+              h("div", { style: ui.label }, "播放声音 / BGM"),
+              h("div", { style: ui.hint }, "播放视频原声或背景音轨。"),
             ),
             h(Switch, { checked: state.sound, onChange: (v) => patch({ sound: v }) }),
           ),
@@ -1007,7 +1220,7 @@ window.__ModuleLoader__.load({
               "div",
               null,
               h("div", { style: ui.label }, "显示跳过提示"),
-              h("div", { style: ui.hint }, "点击屏幕推进，Esc 或点「跳过开屏」直接结束。"),
+              h("div", { style: ui.hint }, "按 ESC 键或点击屏幕随时快速跳过。"),
             ),
             h(Switch, { checked: state.showHint, onChange: (v) => patch({ showHint: v }) }),
           ),
@@ -1018,39 +1231,18 @@ window.__ModuleLoader__.load({
               "div",
               null,
               h("div", { style: ui.label }, "开屏时全屏"),
-              h("div", { style: ui.hint }, "隐藏右上角白色窗口按钮，播完自动恢复窗口。"),
+              h("div", { style: ui.hint }, "隐藏窗口按钮，播完自动恢复窗口。"),
             ),
             h(Switch, { checked: state.fullscreen, onChange: (v) => patch({ fullscreen: v }) }),
           ),
         ),
 
-        h(
-          "div",
-          { style: ui.card },
-          h("div", { style: ui.label }, "开屏长度"),
-          h(
-            "div",
-            { style: ui.chips },
-            ...MODES.map((mode) =>
-              h(
-                "button",
-                {
-                  key: mode.id, type: "button",
-                  style: Object.assign({}, ui.chip, state.mode === mode.id ? ui.chipActive : {}),
-                  onClick: () => patch({ mode: mode.id }),
-                },
-                h("div", { style: ui.chipTitle }, mode.label),
-                h("div", { style: ui.chipHint }, mode.hint),
-              ),
-            ),
-          ),
-        ),
-
+        // 音量调节
         h(
           "div",
           { style: ui.card },
           h(SliderRow, {
-            label: "音量",
+            label: "音量大小",
             value: state.volume,
             min: 0, max: 1, step: 0.01,
             format: (v) => Math.round(v * 100) + "%",
@@ -1058,19 +1250,30 @@ window.__ModuleLoader__.load({
           }),
         ),
 
+        // DIY 自定义说明卡片
         h(
           "div",
-          { style: { display: "flex", gap: 8, flexWrap: "wrap" } },
-          h("button", { type: "button", style: ui.btnPrimary, onClick: () => void playSplash(true) }, "立即重播"),
-          h("button", { type: "button", style: ui.btn, onClick: () => patch(Object.assign({}, DEFAULTS)) }, "恢复默认"),
+          { style: Object.assign({}, ui.card, { borderLeft: "3px solid #ff4444", background: "rgba(255, 50, 50, 0.04)" }) },
+          h("div", { style: Object.assign({}, ui.label, { color: "#ff6666" }) }, "✨ DIY 自定义视频教程"),
+          h("div", { style: ui.hint }, "你可以把任意 mp4 视频放入以下目录，无需重新打包，刷新设置即可直接选择："),
+          h("div", { style: { fontFamily: "monospace", fontSize: 11, background: "rgba(0,0,0,0.25)", padding: "6px 10px", borderRadius: 6, margin: "6px 0", wordBreak: "break-all" } }, userDir),
+          h("div", { style: ui.hint }, "支持覆盖 red_eyes.mp4 或直接丢入新文件。"),
         ),
 
+        // 操作按钮
         h(
           "div",
-          { style: ui.footer },
-          "设置保存在 ~/.dsh-whale-splash/config.json。声音文件：插件目录 assets/splash.m4a（替换后重启 DSH 生效）。",
+          { style: { display: "flex", gap: 8, flexWrap: "wrap", alignItems: "center" } },
+          h("button", { type: "button", style: ui.btnPrimary, onClick: () => void playSplash(true) }, "立即重播预览"),
+          h("button", { type: "button", style: ui.btn, onClick: () => patch(Object.assign({}, DEFAULTS)) }, "恢复默认设置"),
         ),
 
+        // 跃数赞助与作者署名
+        h(
+          "div",
+          { style: Object.assign({}, ui.footer, { marginTop: 6 }) },
+          "🚀 赞助支持：跃数AI中转站 ys666.site · 稳定运行千人站点",
+        ),
         h(
           "div",
           { style: ui.footer },
