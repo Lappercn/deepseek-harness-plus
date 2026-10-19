@@ -39,12 +39,9 @@
 
 ---
 
-> ### 🚀 跃数AI中转站 · 稳定运行中的千人 AI 中转站
+> ### 🚀 跃数AI
 >
-> **一个 Key，接入 DeepSeek / GLM / Kimi / MiniMax 等主流模型。**
-> 长期稳定 · 低延迟 · 不掉线 —— 写代码、跑 Agent、做翻译，一个地址全搞定。
->
-> 👉 **[ys666.site](https://ys666.site)**
+> 极具未来科技感的开屏视觉体验，专为 DeepSeek Harness 深度定制。
 
 ---
 
@@ -262,7 +259,7 @@ deepseek-harness-plus/
 
 作者 **抖音 @孤影**　·　皮肤代码 [MIT](LICENSE) 开源，欢迎二改　·　版本变更见 [CHANGELOG.md](CHANGELOG.md)
 
-感谢 **[跃数AI中转站 · ys666.site](https://ys666.site)** 对本项目的支持
+感谢 **跃数AI** 对本项目的支持
 
 鲸鱼图形取自 DeepSeek 官方标志（品牌标识），本项目与深度求索官方无关，不代表官方立场
 
