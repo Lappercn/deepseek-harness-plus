@@ -388,7 +388,7 @@ export function apply(ctx) {
             // Windows native fullscreen fallback via win-fullscreen.ps1 to cover taskbar
             if (process.platform === 'win32') {
               try {
-                const scriptPath = join(__dirname, 'scripts', 'win-fullscreen.ps1');
+                const scriptPath = join(HERE, 'scripts', 'win-fullscreen.ps1');
                 if (existsSync(scriptPath)) {
                   const { spawn } = await import('node:child_process');
                   spawn('powershell.exe', ['-NoProfile', '-ExecutionPolicy', 'Bypass', '-File', scriptPath, '-mode', payload.mode === 'splash' ? 'splash' : 'restore'], {
