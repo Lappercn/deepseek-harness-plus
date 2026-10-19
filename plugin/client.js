@@ -866,8 +866,10 @@ window.__ModuleLoader__.load({
       video.playsInline = true;
       video.controls = false;
       video.preload = "auto";
-      video.muted = !cfg.sound;
-      video.volume = cfg.volume !== undefined ? cfg.volume : 0.75;
+      video.muted = true; // 浏览器端静音，100% 保证视频毫秒级流畅播放绝不卡死
+      video.playsInline = true;
+      video.controls = false;
+      video.preload = "auto";
 
       const themeQuery = cfg.theme ? ("?theme=" + encodeURIComponent(cfg.theme)) : "";
       video.src = "/whale-splash/video" + themeQuery;
@@ -979,46 +981,24 @@ window.__ModuleLoader__.load({
         finish("video_error");
       });
 
-      const playVideoSafely = () => {
-        video.muted = !cfg.sound;
-        video.volume = cfg.volume !== undefined ? cfg.volume : 0.75;
-        const p = video.play();
-        if (p && typeof p.catch === "function") {
-          p.catch((err) => {
-            console.warn("[whale-splash] unmuted play blocked, trying muted play:", err);
-            video.muted = true;
-            video.play().catch(() => {});
-
-            // 用户一旦有任何交互立刻解静音
-            const unmuteOnInteraction = () => {
-              if (cfg.sound) video.muted = false;
-              video.volume = cfg.volume !== undefined ? cfg.volume : 0.75;
-              window.removeEventListener("pointerdown", unmuteOnInteraction, true);
-              document.removeEventListener("keydown", unmuteOnInteraction, true);
-            };
-            window.addEventListener("pointerdown", unmuteOnInteraction, true);
-            document.addEventListener("keydown", unmuteOnInteraction, true);
-          });
-        }
-      };
-
-      if (video.readyState >= 2) {
-        playVideoSafely();
-      } else {
-        video.addEventListener("canplay", () => playVideoSafely(), { once: true });
-        // 500ms 后强制尝试触发一次播放
-        setTimeout(() => {
-          if (video.paused) playVideoSafely();
-        }, 500);
-      }
+      // 视频自动秒开播放（静音直出，极度丝滑）
+      video.play().catch(() => {});
+      video.addEventListener("canplay", () => {
+        if (video.paused) video.play().catch(() => {});
+      }, { once: true });
 
       document.body.appendChild(overlay);
 
-      // 请求全屏与深色标题栏
+      // 请求全屏、深色标题栏与后端原生音效播放
       void fetch("/whale-splash/window", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ mode: "splash", fullscreen: cfg.fullscreen === true }),
+        body: JSON.stringify({
+          mode: "splash",
+          fullscreen: cfg.fullscreen === true,
+          sound: cfg.sound === true,
+          theme: cfg.theme,
+        }),
       })
         .then((res) => (res.ok ? res.json() : { electron: false }))
         .then((info) => {
