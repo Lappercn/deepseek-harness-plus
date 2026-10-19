@@ -1111,8 +1111,8 @@ window.__ModuleLoader__.load({
     }
 
     const DEFAULT_THEMES = [
-      { id: "red_eyes", label: "🔥 超燃写轮眼", hint: "跃数AI·千人稳定中转·黑红机能流光 (7.8秒)" },
-      { id: "blue_eyes", label: "❄️ 苍天之瞳", hint: "五条悟·无量空处·电光苍眸 (3.4秒)" },
+      { id: "red_eyes", label: "🔥 超燃写轮眼", hint: "跃数AI · 黑红机能流光 (15秒)" },
+      { id: "blue_eyes", label: "❄️ 苍天之瞳", hint: "五条悟 · 无量空处 (15秒)" },
       { id: "default", label: "🐳 经典科技蓝鲸", hint: "HARNESS OS 原生 SVG 自检过场 (16秒)" },
     ];
 
@@ -1268,11 +1268,11 @@ window.__ModuleLoader__.load({
           h("button", { type: "button", style: ui.btn, onClick: () => patch(Object.assign({}, DEFAULTS)) }, "恢复默认设置"),
         ),
 
-        // 跃数赞助与作者署名
+        // 跃数AI 与作者署名
         h(
           "div",
           { style: Object.assign({}, ui.footer, { marginTop: 6 }) },
-          "🚀 赞助支持：跃数AI中转站 ys666.site · 稳定运行千人站点",
+          "🚀 品牌支持：跃数AI",
         ),
         h(
           "div",

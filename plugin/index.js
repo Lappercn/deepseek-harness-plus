@@ -115,8 +115,8 @@ function resolveVideoPath(themeName) {
 function listAvailableVideos() {
   const result = [
     { id: 'default', label: '🐳 经典科技蓝鲸 (HARNESS OS 自检)', isVideo: false },
-    { id: 'red_eyes', label: '🔥 超燃写轮眼 (跃数AI·千人稳定中转)', isVideo: true },
-    { id: 'blue_eyes', label: '❄️ 苍天之瞳 (五条悟·无量空处)', isVideo: true },
+    { id: 'red_eyes', label: '🔥 超燃写轮眼 (跃数AI)', isVideo: true },
+    { id: 'blue_eyes', label: '❄️ 苍天之瞳 (跃数AI)', isVideo: true },
   ];
 
   try {
