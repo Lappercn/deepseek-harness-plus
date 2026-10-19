@@ -412,6 +412,32 @@ export function apply(ctx) {
     }),
   );
 
+  // 7. 打开本地视频目录
+  disposers.push(
+    webServer.register({
+      kind: 'exact',
+      path: `${BASE}/open-folder`,
+      handler: async (req, res) => {
+        mkdirSync(USER_VIDEOS_DIR, { recursive: true });
+        const electron = electronBridge();
+        if (electron && electron.shell && typeof electron.shell.openPath === 'function') {
+          try {
+            await electron.shell.openPath(USER_VIDEOS_DIR);
+            sendJson(res, 200, { ok: true, opened: true, path: USER_VIDEOS_DIR });
+            return;
+          } catch {}
+        }
+        try {
+          const { spawn } = await import('node:child_process');
+          spawn('explorer.exe', [USER_VIDEOS_DIR], { detached: true, stdio: 'ignore' });
+          sendJson(res, 200, { ok: true, opened: true, path: USER_VIDEOS_DIR });
+        } catch (e) {
+          sendJson(res, 200, { ok: false, error: String(e), path: USER_VIDEOS_DIR });
+        }
+      },
+    }),
+  );
+
   if (typeof ctx.effect === 'function') {
     ctx.effect(() => () => {
       for (const dispose of disposers.splice(0)) {

@@ -1021,51 +1021,120 @@ window.__ModuleLoader__.load({
 
     // ── 设置页 ──────────────────────────────────────────────────────────────────
     const ui = {
-      page: { display: "flex", flexDirection: "column", gap: 14, padding: "4px 2px 18px", fontSize: 13, lineHeight: 1.55 },
+      page: { display: "flex", flexDirection: "column", gap: 14, padding: "4px 2px 20px", fontSize: 13, lineHeight: 1.55 },
       hero: {
-        borderRadius: 16, padding: "16px 16px 14px",
-        background: "linear-gradient(135deg, rgba(10,18,34,0.98) 0%, rgba(6,10,20,0.98) 60%, rgba(20,40,72,0.95) 100%)",
+        borderRadius: 16, padding: "18px 20px 16px",
+        background: "linear-gradient(135deg, rgba(8,14,28,0.98) 0%, rgba(14,24,46,0.98) 60%, rgba(22,48,88,0.95) 100%)",
         color: "#eaf6ff", position: "relative", overflow: "hidden",
-        boxShadow: "0 10px 30px rgba(2, 8, 18, 0.35)",
+        boxShadow: "0 10px 30px rgba(2, 8, 22, 0.4)",
+        border: "1px solid rgba(79,140,255,0.25)",
       },
       heroGlow: {
-        position: "absolute", inset: "-40% -20% auto auto", width: 240, height: 240, borderRadius: "50%",
-        background: "radial-gradient(circle, rgba(120,190,255,0.30) 0%, rgba(0,0,0,0) 70%)",
+        position: "absolute", inset: "-40% -20% auto auto", width: 260, height: 260, borderRadius: "50%",
+        background: "radial-gradient(circle, rgba(90,170,255,0.28) 0%, rgba(0,0,0,0) 70%)",
         pointerEvents: "none",
       },
-      heroTitle: { fontSize: 17, fontWeight: 650, letterSpacing: 0.5 },
-      heroSub: { marginTop: 4, fontSize: 12, color: "rgba(206,232,255,0.76)" },
+      heroTop: { display: "flex", alignItems: "center", justifyContent: "space-between", marginBottom: 6 },
+      heroBadge: {
+        display: "inline-flex", alignItems: "center", gap: 6,
+        padding: "3px 9px", borderRadius: 999, fontSize: 11, fontWeight: 600,
+        background: "rgba(79,140,255,0.2)", border: "1px solid rgba(79,140,255,0.4)", color: "#a8caff"
+      },
+      heroTitle: { fontSize: 18, fontWeight: 700, letterSpacing: 0.5, color: "#fff" },
+      heroSub: { marginTop: 4, fontSize: 12, color: "rgba(206,232,255,0.8)" },
+
+      // 中转站特惠卡片
+      promoCard: {
+        borderRadius: 16, padding: "18px 20px",
+        background: "linear-gradient(135deg, rgba(34, 16, 62, 0.95) 0%, rgba(18, 24, 52, 0.96) 55%, rgba(14, 38, 72, 0.95) 100%)",
+        border: "1px solid rgba(168, 85, 247, 0.45)",
+        boxShadow: "0 10px 32px rgba(120, 60, 220, 0.16)",
+        color: "#f3e8ff", display: "flex", flexDirection: "column", gap: 12,
+        position: "relative", overflow: "hidden",
+      },
+      promoGlow: {
+        position: "absolute", top: -50, right: -40, width: 200, height: 200, borderRadius: "50%",
+        background: "radial-gradient(circle, rgba(168, 85, 247, 0.35) 0%, rgba(0,0,0,0) 70%)",
+        pointerEvents: "none",
+      },
+      promoHeader: { display: "flex", alignItems: "center", justifyContent: "space-between", flexWrap: "wrap", gap: 8 },
+      promoTitle: { fontSize: 16, fontWeight: 700, color: "#fff", display: "flex", alignItems: "center", gap: 8 },
+      promoTag: {
+        fontSize: 11, fontWeight: 600, padding: "2px 8px", borderRadius: 6,
+        background: "rgba(168, 85, 247, 0.25)", border: "1px solid rgba(168, 85, 247, 0.5)", color: "#d8b4fe",
+      },
+      promoGrid: { display: "grid", gridTemplateColumns: "repeat(auto-fit, minmax(200px, 1fr))", gap: 8, marginTop: 2 },
+      promoItem: {
+        padding: "8px 10px", borderRadius: 8, background: "rgba(0, 0, 0, 0.25)",
+        border: "1px solid rgba(255, 255, 255, 0.08)", fontSize: 12, color: "#e9d5ff",
+      },
+      promoActions: { display: "flex", alignItems: "center", gap: 10, flexWrap: "wrap", marginTop: 4 },
+      btnPurple: {
+        padding: "8px 16px", borderRadius: 10, cursor: "pointer", fontWeight: 600, fontSize: 12,
+        background: "linear-gradient(135deg, #9333ea 0%, #7c3aed 100%)",
+        border: "1px solid #c084fc", color: "#fff", boxShadow: "0 2px 10px rgba(147, 51, 234, 0.35)",
+        transition: "transform .15s ease, box-shadow .15s ease",
+      },
+      btnPurpleOutline: {
+        padding: "8px 14px", borderRadius: 10, cursor: "pointer", fontSize: 12,
+        background: "rgba(147, 51, 234, 0.12)", border: "1px solid rgba(192, 132, 252, 0.4)",
+        color: "#e9d5ff",
+      },
+
+      // 实时预览窗
+      previewCard: {
+        border: "1px solid var(--dsw-alias-border-l1, rgba(0,0,0,.12))", borderRadius: 16,
+        padding: "16px", background: "var(--dsw-specific-tip, rgba(255,255,255,.5))",
+        display: "flex", flexDirection: "column", gap: 12,
+      },
+      previewFrame: {
+        position: "relative", width: "100%", aspectRatio: "16 / 9", maxHeight: 270,
+        background: "#000", borderRadius: 12, overflow: "hidden",
+        display: "flex", alignItems: "center", justifyContent: "center",
+        border: "1px solid rgba(255, 255, 255, 0.12)", boxShadow: "0 8px 24px rgba(0,0,0,0.5)",
+      },
+      previewControls: {
+        display: "flex", alignItems: "center", justifyContent: "space-between", flexWrap: "wrap", gap: 8,
+      },
+
       card: {
         border: "1px solid var(--dsw-alias-border-l1, rgba(0,0,0,.12))", borderRadius: 14,
-        padding: "14px 14px 16px", background: "var(--dsw-specific-tip, rgba(255,255,255,.5))",
+        padding: "14px 16px 16px", background: "var(--dsw-specific-tip, rgba(255,255,255,.5))",
         display: "flex", flexDirection: "column", gap: 12,
       },
       row: { display: "flex", alignItems: "center", justifyContent: "space-between", gap: 12 },
-      label: { fontSize: 13, fontWeight: 500 },
+      label: { fontSize: 13, fontWeight: 600 },
       hint: { fontSize: 11, color: "var(--dsw-alias-label-tertiary, #8a919f)", marginTop: 2 },
       value: { fontSize: 12, color: "var(--dsw-alias-label-tertiary, #8a919f)", minWidth: 44, textAlign: "right", fontVariantNumeric: "tabular-nums" },
       slider: { width: "100%", accentColor: "#4f8cff", cursor: "pointer" },
-      chips: { display: "flex", gap: 8, flexWrap: "wrap" },
-      chip: {
-        flex: "1 1 0", minWidth: 120, padding: "10px 12px", borderRadius: 12,
+
+      themeGrid: { display: "grid", gridTemplateColumns: "repeat(auto-fit, minmax(150px, 1fr))", gap: 10 },
+      themeCard: {
+        display: "flex", flexDirection: "column", justifyContent: "space-between",
+        padding: "12px", borderRadius: 12, cursor: "pointer", textAlign: "left",
         border: "1px solid var(--dsw-alias-border-l1, rgba(0,0,0,.12))",
-        background: "transparent", color: "inherit", cursor: "pointer", textAlign: "center", fontSize: 12, lineHeight: 1.35,
+        background: "rgba(255, 255, 255, 0.03)", color: "inherit",
+        position: "relative", transition: "all .15s ease", minHeight: 74,
       },
-      chipActive: {
-        border: "1px solid rgba(79,140,255,0.85)", background: "rgba(79,140,255,0.14)",
-        boxShadow: "0 0 0 1px rgba(79,140,255,0.28) inset",
+      themeCardActive: {
+        border: "1.5px solid #4f8cff", background: "rgba(79,140,255,0.12)",
+        boxShadow: "0 0 12px rgba(79,140,255,0.2) inset",
       },
-      chipTitle: { fontWeight: 600, fontSize: 13 },
-      chipHint: { fontSize: 11, color: "var(--dsw-alias-label-tertiary, #8a919f)" },
+      themeBadgeActive: {
+        position: "absolute", top: 8, right: 8, width: 18, height: 18, borderRadius: "50%",
+        background: "#4f8cff", color: "#fff", fontSize: 11, fontWeight: 700,
+        display: "flex", alignItems: "center", justifyContent: "center",
+      },
+
       btn: {
         padding: "8px 14px", borderRadius: 10,
         border: "1px solid var(--dsw-alias-border-l1, rgba(0,0,0,.12))",
         background: "transparent", color: "inherit", fontSize: 12, cursor: "pointer",
       },
       btnPrimary: {
-        padding: "8px 14px", borderRadius: 10,
-        border: "1px solid rgba(79,140,255,0.7)", background: "rgba(79,140,255,0.16)",
-        color: "inherit", fontSize: 12, cursor: "pointer",
+        padding: "8px 16px", borderRadius: 10,
+        border: "1px solid rgba(79,140,255,0.7)", background: "rgba(79,140,255,0.18)",
+        color: "inherit", fontSize: 12, fontWeight: 600, cursor: "pointer",
       },
       footer: { fontSize: 11, color: "var(--dsw-alias-label-tertiary, #8a919f)" },
     };
@@ -1116,22 +1185,20 @@ window.__ModuleLoader__.load({
       { id: "default", label: "🐳 经典科技蓝鲸", hint: "HARNESS OS 原生 SVG 自检过场 (16秒)" },
     ];
 
-    const MODES = [
-      { id: "full", label: "完整开屏", hint: "播放完整开屏动画或超燃视频" },
-      { id: "logo", label: "仅 Logo", hint: "只放鲸鱼标志（仅在经典蓝鲸模式下生效）" },
-    ];
-
     function SettingsSection() {
       const [state, setState] = React.useState(settings);
       const [themes, setThemes] = React.useState(DEFAULT_THEMES);
       const [userDir, setUserDir] = React.useState("~/.dsh-whale-splash/videos");
+      const [previewMuted, setPreviewMuted] = React.useState(true);
+      const [copiedText, setCopiedText] = React.useState("");
+
+      const videoRef = React.useRef(null);
 
       React.useEffect(() => {
         const fn = (next) => setState(next);
         listeners.add(fn);
         setState(settings);
 
-        // 获取可用视频列表
         fetch("/whale-splash/videos")
           .then((r) => r.ok ? r.json() : null)
           .then((data) => {
@@ -1150,44 +1217,219 @@ window.__ModuleLoader__.load({
         setState(next);
       };
 
+      const copyToClipboard = (text, label) => {
+        try {
+          if (navigator.clipboard && navigator.clipboard.writeText) {
+            navigator.clipboard.writeText(text);
+          } else {
+            const input = document.createElement("input");
+            input.value = text;
+            document.body.appendChild(input);
+            input.select();
+            document.execCommand("copy");
+            document.body.removeChild(input);
+          }
+          setCopiedText(label);
+          setTimeout(() => setCopiedText(""), 2200);
+        } catch {
+          setCopiedText("复制失败，请手动复制");
+          setTimeout(() => setCopiedText(""), 2200);
+        }
+      };
+
+      const openUserFolder = () => {
+        fetch("/whale-splash/open-folder", { method: "POST" })
+          .then((r) => r.ok ? r.json() : null)
+          .then((d) => {
+            if (d && d.ok) {
+              setCopiedText("已在资源管理器中打开文件夹！");
+              setTimeout(() => setCopiedText(""), 2500);
+            }
+          })
+          .catch(() => {});
+      };
+
       const currentTheme = state.theme || "red_eyes";
+      const isCurrentVideo = currentTheme !== "default";
+      const activeThemeObj = themes.find((t) => t.id === currentTheme) || DEFAULT_THEMES[0];
 
       return h(
         "div",
         { style: ui.page },
+
+        // 1. 顶部 Header
         h(
           "div",
           { style: ui.hero },
           h("div", { style: ui.heroGlow }),
-          h("div", { style: ui.heroTitle }, "开屏动画"),
-          h("div", { style: ui.heroSub }, "HARNESS OS 开机动画：支持超燃写轮眼、苍天之瞳、经典蓝鲸与任意自定义视频。"),
-        ),
-
-        // 核心选择：开屏风格 / 视频主题
-        h(
-          "div",
-          { style: ui.card },
-          h("div", { style: ui.label }, "🎬 开机动画风格 / 视频主题"),
-          h("div", { style: Object.assign({}, ui.hint, { marginBottom: 12 }) }, "点击即可切换开机动画风格，支持放任意 mp4/webm 视频文件到用户视频目录。"),
           h(
             "div",
-            { style: ui.chips },
-            ...themes.map((th) =>
+            { style: ui.heroTop },
+            h("div", { style: ui.heroBadge }, "🐳 DSH 皮肤引擎 · PRO"),
+            h("div", { style: { fontSize: 11, color: "rgba(160,210,255,0.85)" } }, "● 状态就绪"),
+          ),
+          h("div", { style: ui.heroTitle }, "开屏动画与动态壁纸管理"),
+          h("div", { style: ui.heroSub }, "支持超燃黑红写轮眼、五条悟苍天之瞳、经典蓝鲸自检与任意本地 DIY 视频。"),
+        ),
+
+        // 2. 跃数AI中转站 · 官方直连与特惠中心
+        h(
+          "div",
+          { style: ui.promoCard },
+          h("div", { style: ui.promoGlow }),
+          h(
+            "div",
+            { style: ui.promoHeader },
+            h(
+              "div",
+              { style: ui.promoTitle },
+              "🚀 跃数AI 中转站 (ys666.site)",
+            ),
+            h("div", { style: ui.promoTag }, "✨ 稳定运行千人站点"),
+          ),
+          h(
+            "div",
+            { style: { fontSize: 12, color: "#f5d0fe", lineHeight: 1.45 } },
+            "全网主流大模型一站直达 · DeepSeek R1/V3 · Claude 3.5 Sonnet · GPT-4o · Gemini 1.5 Pro · 官方正品专线",
+          ),
+          h(
+            "div",
+            { style: ui.promoGrid },
+            h("div", { style: ui.promoItem }, "🎁【新人福利】注册即送测试额度，无门槛秒开测试"),
+            h("div", { style: ui.promoItem }, "⚡【超低延迟】专线网络加速，千人并发稳定不掉线"),
+            h("div", { style: ui.promoItem }, "💰【超值特惠】折上折充值特惠，高性价比长期运营"),
+            h("div", { style: ui.promoItem }, "💎【一个Key全通】无缝适配 DSH、NextChat、Cline 等"),
+          ),
+          h(
+            "div",
+            { style: ui.promoActions },
+            h(
+              "button",
+              {
+                type: "button",
+                style: ui.btnPurple,
+                onClick: () => window.open("https://ys666.site", "_blank"),
+              },
+              "🔗 访问 ys666.site 官网",
+            ),
+            h(
+              "button",
+              {
+                type: "button",
+                style: ui.btnPurpleOutline,
+                onClick: () => copyToClipboard("https://ys666.site", "官网链接已复制 (https://ys666.site)"),
+              },
+              "📋 复制官网链接",
+            ),
+            copiedText && copiedText.includes("官网")
+              ? h("span", { style: { fontSize: 12, color: "#4ade80", fontWeight: 600 } }, "✓ " + copiedText)
+              : null,
+          ),
+        ),
+
+        // 3. 实时效果小窗预览
+        h(
+          "div",
+          { style: ui.previewCard },
+          h(
+            "div",
+            { style: { display: "flex", alignItems: "center", justifyContent: "space-between" } },
+            h("div", { style: ui.label }, "🎬 实时效果小窗预览"),
+            h(
+              "div",
+              { style: { fontSize: 11, color: "var(--dsw-alias-label-tertiary, #8a919f)", display: "flex", alignItems: "center", gap: 6 } },
+              h("span", { style: { width: 6, height: 6, borderRadius: "50%", background: "#4ade80", display: "inline-block" } }),
+              activeThemeObj ? activeThemeObj.label : currentTheme,
+            ),
+          ),
+          h(
+            "div",
+            { style: ui.previewFrame },
+            isCurrentVideo
+              ? h("video", {
+                  ref: videoRef,
+                  key: currentTheme,
+                  src: "/whale-splash/video?theme=" + encodeURIComponent(currentTheme),
+                  autoPlay: true,
+                  loop: true,
+                  playsInline: true,
+                  muted: previewMuted,
+                  style: { width: "100%", height: "100%", objectFit: "cover" },
+                })
+              : h(
+                  "div",
+                  { style: { display: "flex", flexDirection: "column", alignItems: "center", gap: 10, color: "#93c5fd" } },
+                  h("div", { style: { fontSize: 32 } }, "🐳"),
+                  h("div", { style: { fontSize: 14, fontWeight: 600 } }, "深度求索 · HARNESS OS 原生自检"),
+                  h("div", { style: { fontSize: 11, color: "#bfdbfe" } }, "纯代码 SVG / HUD 七幕过场 (16秒)"),
+                ),
+          ),
+          h(
+            "div",
+            { style: ui.previewControls },
+            h(
+              "div",
+              { style: { display: "flex", gap: 8 } },
+              isCurrentVideo
+                ? h(
+                    "button",
+                    {
+                      type: "button",
+                      style: ui.btn,
+                      onClick: () => {
+                        const next = !previewMuted;
+                        setPreviewMuted(next);
+                        if (videoRef.current) videoRef.current.muted = next;
+                      },
+                    },
+                    previewMuted ? "🔇 开启小窗原声" : "🔊 静音小窗原声",
+                  )
+                : null,
               h(
                 "button",
                 {
-                  key: th.id, type: "button",
-                  style: Object.assign({}, ui.chip, currentTheme === th.id ? ui.chipActive : {}),
-                  onClick: () => patch({ theme: th.id }),
+                  type: "button",
+                  style: ui.btnPrimary,
+                  onClick: () => void playSplash(true),
                 },
-                h("div", { style: ui.chipTitle }, th.label),
-                h("div", { style: ui.chipHint }, th.hint || (th.custom ? "自定义本地视频" : "")),
+                "🖥️ 全屏沉浸体验 (按 ESC 跳过)",
               ),
+            ),
+            h(
+              "div",
+              { style: { fontSize: 11, color: "var(--dsw-alias-label-tertiary, #8a919f)" } },
+              isCurrentVideo ? "1080P 高清 · 15.0s 循环" : "矢量自检 · 16.0s 过场",
             ),
           ),
         ),
 
-        // 基础开关
+        // 4. 开机动画风格选择 (卡片网格)
+        h(
+          "div",
+          { style: ui.card },
+          h("div", { style: ui.label }, "🎨 选择开机动画风格"),
+          h("div", { style: ui.hint }, "点击下方卡片即可实时在上方小窗预览，启动 DSH 时将按此风格播放："),
+          h(
+            "div",
+            { style: ui.themeGrid },
+            ...themes.map((th) => {
+              const isActive = currentTheme === th.id;
+              return h(
+                "div",
+                {
+                  key: th.id,
+                  style: Object.assign({}, ui.themeCard, isActive ? ui.themeCardActive : {}),
+                  onClick: () => patch({ theme: th.id }),
+                },
+                h("div", { style: { fontWeight: 600, fontSize: 13, marginBottom: 4 } }, th.label),
+                h("div", { style: { fontSize: 11, color: "var(--dsw-alias-label-tertiary, #8a919f)", lineHeight: 1.35 } }, th.hint || (th.custom ? "自定义本地视频" : "")),
+                isActive ? h("div", { style: ui.themeBadgeActive }, "✓") : null,
+              );
+            }),
+          ),
+        ),
+
+        // 5. 基础常规开关
         h(
           "div",
           { style: ui.card },
@@ -1198,7 +1440,7 @@ window.__ModuleLoader__.load({
               "div",
               null,
               h("div", { style: ui.label }, "启用开屏动画"),
-              h("div", { style: ui.hint }, "关闭后打开界面直接进主界面。"),
+              h("div", { style: ui.hint }, "关闭后打开界面直接进主工作区。"),
             ),
             h(Switch, { checked: state.enabled, onChange: (v) => patch({ enabled: v }) }),
           ),
@@ -1209,7 +1451,7 @@ window.__ModuleLoader__.load({
               "div",
               null,
               h("div", { style: ui.label }, "播放声音 / BGM"),
-              h("div", { style: ui.hint }, "播放视频原声或背景音轨。"),
+              h("div", { style: ui.hint }, "全屏开机时播放超燃原声或背景音乐。"),
             ),
             h(Switch, { checked: state.sound, onChange: (v) => patch({ sound: v }) }),
           ),
@@ -1231,18 +1473,18 @@ window.__ModuleLoader__.load({
               "div",
               null,
               h("div", { style: ui.label }, "开屏时全屏"),
-              h("div", { style: ui.hint }, "隐藏窗口按钮，播完自动恢复窗口。"),
+              h("div", { style: ui.hint }, "隐藏窗口按钮，播完自动平滑恢复窗口。"),
             ),
             h(Switch, { checked: state.fullscreen, onChange: (v) => patch({ fullscreen: v }) }),
           ),
         ),
 
-        // 音量调节
+        // 6. 音量调节
         h(
           "div",
           { style: ui.card },
           h(SliderRow, {
-            label: "音量大小",
+            label: "开机音量大小",
             value: state.volume,
             min: 0, max: 1, step: 0.01,
             format: (v) => Math.round(v * 100) + "%",
@@ -1250,38 +1492,49 @@ window.__ModuleLoader__.load({
           }),
         ),
 
-        // DIY 自定义说明卡片
+        // 7. DIY 自定义视频教程与快速直达
         h(
           "div",
-          { style: Object.assign({}, ui.card, { borderLeft: "3px solid #ff4444", background: "rgba(255, 50, 50, 0.04)" }) },
-          h("div", { style: Object.assign({}, ui.label, { color: "#ff6666" }) }, "✨ DIY 自定义视频教程"),
-          h("div", { style: ui.hint }, "你可以把任意 mp4 视频放入以下目录，无需重新打包，刷新设置即可直接选择："),
-          h("div", { style: { fontFamily: "monospace", fontSize: 11, background: "rgba(0,0,0,0.25)", padding: "6px 10px", borderRadius: 6, margin: "6px 0", wordBreak: "break-all" } }, userDir),
-          h("div", { style: ui.hint }, "支持覆盖 red_eyes.mp4 或直接丢入新文件。"),
+          { style: Object.assign({}, ui.card, { borderLeft: "3.5px solid #4f8cff", background: "rgba(79,140,255,0.04)" }) },
+          h("div", { style: Object.assign({}, ui.label, { color: "#4f8cff" }) }, "✨ DIY 本地视频换源教程"),
+          h("div", { style: ui.hint }, "你可以把任意 MP4 / WebM 视频放入以下目录，无需重新打包，在上方即可直接选用："),
+          h("div", { style: { fontFamily: "monospace", fontSize: 11, background: "rgba(0,0,0,0.3)", padding: "7px 10px", borderRadius: 6, margin: "6px 0", wordBreak: "break-all" } }, userDir),
+          h(
+            "div",
+            { style: { display: "flex", gap: 8, flexWrap: "wrap", marginTop: 4 } },
+            h(
+              "button",
+              { type: "button", style: ui.btn, onClick: openUserFolder },
+              "📂 一键打开视频目录",
+            ),
+            h(
+              "button",
+              { type: "button", style: ui.btn, onClick: () => copyToClipboard(userDir, "目录路径已复制") },
+              "📋 复制目录路径",
+            ),
+            copiedText && copiedText.includes("目录")
+              ? h("span", { style: { fontSize: 12, color: "#4ade80", fontWeight: 600, display: "flex", alignItems: "center" } }, "✓ " + copiedText)
+              : null,
+          ),
         ),
 
-        // 操作按钮
+        // 8. 恢复默认与关于
         h(
           "div",
-          { style: { display: "flex", gap: 8, flexWrap: "wrap", alignItems: "center" } },
-          h("button", { type: "button", style: ui.btnPrimary, onClick: () => void playSplash(true) }, "立即重播预览"),
-          h("button", { type: "button", style: ui.btn, onClick: () => patch(Object.assign({}, DEFAULTS)) }, "恢复默认设置"),
+          { style: { display: "flex", justifyContent: "space-between", alignItems: "center", flexWrap: "wrap", gap: 8, marginTop: 4 } },
+          h("button", { type: "button", style: ui.btn, onClick: () => patch(Object.assign({}, DEFAULTS)) }, "↺ 恢复默认设置"),
+          h("div", { style: ui.footer }, "设置保存在 ~/.dsh-whale-splash/config.json"),
         ),
 
-        // 跃数AI 与作者署名
+        // 9. 页脚官方品牌与作者署名
         h(
           "div",
-          { style: Object.assign({}, ui.footer, { marginTop: 6 }) },
-          "🚀 品牌支持：跃数AI",
-        ),
-        h(
-          "div",
-          { style: ui.footer },
-          "开屏动画皮肤 · 作者：抖音 @孤影",
+          { style: Object.assign({}, ui.footer, { textAlign: "center", marginTop: 8, display: "flex", flexDirection: "column", gap: 4 }) },
+          h("div", null, "🚀 官方直连支持：跃数AI (ys666.site) · 稳定运行千人站点"),
+          h("div", null, "开屏动画皮肤 · 作者：抖音 @孤影 · 遵循 MIT 开源协议"),
         ),
       );
     }
-
     // ── 插件入口 ────────────────────────────────────────────────────────────────
     const inject = ["slots"];
 
