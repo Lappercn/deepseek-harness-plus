@@ -1189,7 +1189,8 @@ window.__ModuleLoader__.load({
 
     const DEFAULT_THEMES = [
       { id: "red_eyes", label: "🔥 超燃写轮眼", hint: "跃数AI · 黑红机能流光 (15秒)" },
-      { id: "blue_eyes", label: "❄️ 苍天之瞳", hint: "五条悟 · 无量空处 (15秒)" },
+      { id: "thorns_glory", label: "👑 荆棘与荣光", hint: "暗黑救赎 · 圣冠荆棘重低音 (15秒)" },
+      { id: "blue_eyes", label: "❄️ 苍天之瞳", hint: "五条悟 · 无量空处苍眸 (15秒)" },
       { id: "default", label: "🐳 经典科技蓝鲸", hint: "HARNESS OS 原生 SVG 自检过场 (16秒)" },
     ];
 

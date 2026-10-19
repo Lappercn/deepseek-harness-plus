@@ -118,7 +118,8 @@ function listAvailableVideos() {
   const result = [
     { id: 'default', label: '🐳 经典科技蓝鲸 (HARNESS OS 自检)', isVideo: false },
     { id: 'red_eyes', label: '🔥 超燃写轮眼 (跃数AI)', isVideo: true },
-    { id: 'blue_eyes', label: '❄️ 苍天之瞳 (跃数AI)', isVideo: true },
+    { id: 'thorns_glory', label: '👑 荆棘与荣光 (暗黑救赎)', isVideo: true },
+    { id: 'blue_eyes', label: '❄️ 苍天之瞳 (五条悟)', isVideo: true },
   ];
 
   try {
@@ -127,7 +128,7 @@ function listAvailableVideos() {
       for (const file of files) {
         const id = file;
         const base = basename(file, extname(file));
-        if (base === 'red_eyes' || base === 'blue_eyes') continue;
+        if (base === 'red_eyes' || base === 'blue_eyes' || base === 'thorns_glory') continue;
         result.push({
           id: file,
           label: `🎬 自定义视频: ${file}`,
