@@ -866,7 +866,6 @@ window.__ModuleLoader__.load({
       video.playsInline = true;
       video.controls = false;
       video.preload = "auto";
-      video.muted = !cfg.sound;
       video.volume = cfg.volume !== undefined ? cfg.volume : 0.75;
 
       const themeQuery = cfg.theme ? ("?theme=" + encodeURIComponent(cfg.theme)) : "";
@@ -967,18 +966,17 @@ window.__ModuleLoader__.load({
         finish("video_error");
       });
 
-      // 尝试自动播放（处理可能的手势限制）
+      // 先静音确保一定能播起来，然后立刻尝试取消静音
+      video.muted = true;
       const playPromise = video.play();
-      if (playPromise && typeof playPromise.catch === "function") {
-        playPromise.catch(() => {
-          const kick = () => {
-            video.play().catch(() => {});
-            window.removeEventListener("pointerdown", kick, true);
-            document.removeEventListener("keydown", kick, true);
-          };
-          window.addEventListener("pointerdown", kick, true);
-          document.addEventListener("keydown", kick, true);
-        });
+      if (playPromise && typeof playPromise.then === "function") {
+        playPromise.then(() => {
+          // 播放成功了，立刻尝试取消静音
+          if (cfg.sound) {
+            video.muted = false;
+            video.volume = cfg.volume !== undefined ? cfg.volume : 0.75;
+          }
+        }).catch(() => {});
       }
 
       document.body.appendChild(overlay);
