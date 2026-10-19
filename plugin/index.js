@@ -1,18 +1,18 @@
 /**
  * dsh-whale-splash — 宿主端（Host half）。
  *
- * 职责很小：
- *   1. `GET /whale-splash/audio`：把插件自带的开屏音轨（assets/splash.m4a）
- *      用 Range 流式返回给浏览器，`<audio>` 才能正常加载/拖动；
- *   2. `GET/PUT /whale-splash/settings`：把开屏设置持久化到
- *      `~/.dsh-whale-splash/config.json`（与端口无关，重启不丢）。
- *
- * 不写别的文件、不联网、不注册工具。
+ * 职责：
+ *   1. `GET /whale-splash/audio`：流式提供开屏音频
+ *   2. `GET /whale-splash/video`：流式提供自定义视频开机动画（支持 theme=red_eyes, blue_eyes, custom）
+ *   3. `GET/PUT /whale-splash/settings`：读写设置持久化
+ *   4. `GET /whale-splash/videos`：列出当前可用的视频主题（内置与用户自定义）
+ *   5. `POST /whale-splash/window`：全屏与窗口按钮颜色控制
+ *   6. `GET /whale-splash/health`：健康检查
  */
 
-import { createReadStream, existsSync, mkdirSync, readFileSync, renameSync, statSync, writeFileSync } from 'node:fs';
+import { createReadStream, existsSync, mkdirSync, readFileSync, readdirSync, renameSync, statSync, writeFileSync } from 'node:fs';
 import { homedir } from 'node:os';
-import { dirname, join } from 'node:path';
+import { dirname, join, extname, basename } from 'node:path';
 import { fileURLToPath } from 'node:url';
 import { createRequire } from 'node:module';
 
@@ -20,17 +20,20 @@ const require = createRequire(import.meta.url);
 
 const BASE = '/whale-splash';
 const HERE = dirname(fileURLToPath(import.meta.url));
-const AUDIO_FILE = join(HERE, 'assets', 'splash.m4a');
+const ASSETS_DIR = join(HERE, 'assets');
+const AUDIO_FILE = join(ASSETS_DIR, 'splash.m4a');
 const CONFIG_DIR = join(homedir(), '.dsh-whale-splash');
 const CONFIG_FILE = join(CONFIG_DIR, 'config.json');
+const USER_VIDEOS_DIR = join(CONFIG_DIR, 'videos');
 
 /** 默认设置；客户端有同样一份兜底值，两边保持一致。 */
 export const DEFAULTS = Object.freeze({
   enabled: true,
   sound: true,
-  volume: 0.65,
+  volume: 0.75,
   holdMs: 3400,
-  mode: 'full',
+  mode: 'full', // 'full' | 'logo' | 'video'
+  theme: 'red_eyes', // 'default' (SVG动画) | 'red_eyes' | 'blue_eyes' | 自定义视频文件名
   fullscreen: true,
   showHint: true,
 });
@@ -46,7 +49,8 @@ export function normalizeSettings(input, base = DEFAULTS) {
   const merged = { ...DEFAULTS, ...base };
   return {
     enabled: typeof src.enabled === 'boolean' ? src.enabled : merged.enabled,
-    mode: src.mode === 'logo' || src.mode === 'full' ? src.mode : merged.mode,
+    mode: ['logo', 'full', 'video'].includes(src.mode) ? src.mode : merged.mode,
+    theme: typeof src.theme === 'string' && src.theme ? src.theme : merged.theme,
     fullscreen: typeof src.fullscreen === 'boolean' ? src.fullscreen : merged.fullscreen,
     sound: typeof src.sound === 'boolean' ? src.sound : merged.sound,
     volume: clamp(src.volume, 0, 1, merged.volume),
@@ -69,6 +73,72 @@ function writeSettings(next) {
   const tmp = CONFIG_FILE + '.tmp';
   writeFileSync(tmp, JSON.stringify(next, null, 2) + '\n', 'utf8');
   renameSync(tmp, CONFIG_FILE);
+}
+
+function resolveVideoPath(themeName) {
+  mkdirSync(USER_VIDEOS_DIR, { recursive: true });
+
+  // 1. Check user custom directory first (~/.dsh-whale-splash/videos/<themeName>.mp4 or exact filename)
+  if (themeName) {
+    const candidates = [
+      join(USER_VIDEOS_DIR, themeName),
+      join(USER_VIDEOS_DIR, `${themeName}.mp4`),
+      join(USER_VIDEOS_DIR, `${themeName}.webm`),
+      join(ASSETS_DIR, `${themeName}.mp4`),
+      join(ASSETS_DIR, `${themeName}.webm`),
+    ];
+    for (const c of candidates) {
+      if (existsSync(c) && statSync(c).isFile()) return c;
+    }
+  }
+
+  // 2. Default fallbacks
+  const defaultRed = join(USER_VIDEOS_DIR, 'red_eyes.mp4');
+  if (existsSync(defaultRed)) return defaultRed;
+  const assetRed = join(ASSETS_DIR, 'red_eyes.mp4');
+  if (existsSync(assetRed)) return assetRed;
+
+  const defaultBlue = join(USER_VIDEOS_DIR, 'blue_eyes.mp4');
+  if (existsSync(defaultBlue)) return defaultBlue;
+  const assetBlue = join(ASSETS_DIR, 'blue_eyes.mp4');
+  if (existsSync(assetBlue)) return assetBlue;
+
+  // 3. Scan user directory for any video
+  if (existsSync(USER_VIDEOS_DIR)) {
+    const files = readdirSync(USER_VIDEOS_DIR).filter(f => /\.(mp4|webm|mkv)$/i.test(f));
+    if (files.length > 0) return join(USER_VIDEOS_DIR, files[0]);
+  }
+
+  return null;
+}
+
+function listAvailableVideos() {
+  const result = [
+    { id: 'default', label: '🐳 经典科技蓝鲸 (HARNESS OS 自检)', isVideo: false },
+    { id: 'red_eyes', label: '🔥 超燃写轮眼 (跃数AI·千人稳定中转)', isVideo: true },
+    { id: 'blue_eyes', label: '❄️ 苍天之瞳 (五条悟·无量空处)', isVideo: true },
+  ];
+
+  try {
+    if (existsSync(USER_VIDEOS_DIR)) {
+      const files = readdirSync(USER_VIDEOS_DIR).filter(f => /\.(mp4|webm)$/i.test(f));
+      for (const file of files) {
+        const id = file;
+        const base = basename(file, extname(file));
+        if (base === 'red_eyes' || base === 'blue_eyes') continue;
+        result.push({
+          id: file,
+          label: `🎬 自定义视频: ${file}`,
+          isVideo: true,
+          custom: true,
+        });
+      }
+    }
+  } catch {
+    /* noop */
+  }
+
+  return result;
 }
 
 const sendJson = (res, status, payload) => {
@@ -95,15 +165,47 @@ const readBody = (req, limit = 32 * 1024) =>
     req.on('error', reject);
   });
 
+function serveRangeFile(filePath, contentType, req, res) {
+  if (req.method !== 'GET' && req.method !== 'HEAD') {
+    sendJson(res, 405, { error: 'method_not_allowed' });
+    return;
+  }
+  if (!filePath || !existsSync(filePath)) {
+    sendJson(res, 404, { error: 'file_missing' });
+    return;
+  }
+  const total = statSync(filePath).size;
+  const range = req.headers.range;
+  res.setHeader('Content-Type', contentType);
+  res.setHeader('Accept-Ranges', 'bytes');
+  res.setHeader('Cache-Control', 'no-store');
+  if (range) {
+    const match = /^bytes=(\d*)-(\d*)$/.exec(String(range));
+    if (match) {
+      const start = match[1] === '' ? total - Number(match[2]) : Number(match[1]);
+      const end = match[2] === '' || match[1] === '' ? total - 1 : Number(match[2]);
+      if (start >= 0 && end >= start && start < total) {
+        res.statusCode = 206;
+        res.setHeader('Content-Range', `bytes ${start}-${end}/${total}`);
+        res.setHeader('Content-Length', String(end - start + 1));
+        if (req.method === 'HEAD') res.end();
+        else createReadStream(filePath, { start, end }).pipe(res);
+        return;
+      }
+    }
+    res.statusCode = 416;
+    res.setHeader('Content-Range', `bytes */${total}`);
+    res.end();
+    return;
+  }
+  res.setHeader('Content-Length', String(total));
+  if (req.method === 'HEAD') res.end();
+  else createReadStream(filePath).pipe(res);
+}
+
 export const name = 'whale-splash';
 export const inject = ['webServer'];
 
-/**
- * 宿主插件运行在 DSH Desktop 主进程里，可以直接操作 Electron 窗口：
- * 开屏时把标题栏窗口按钮的 symbolColor 设成黑色，让它融进纯黑背景
- * （看起来就像全屏、没有那几个白点），播完恢复。
- * 普通 web profile 里 require('electron') 失败，自动退化为纯前端方案。
- */
 function electronBridge() {
   try {
     const electron = require('electron');
@@ -116,117 +218,125 @@ function electronBridge() {
 
 function targetWindows(electron) {
   try {
-    const all = electron.BrowserWindow.getAllWindows().filter((win) => win && !win.isDestroyed());
-    const visible = all.filter((win) => win.isVisible());
-    return visible.length > 0 ? visible : all;
+    return electron.BrowserWindow.getAllWindows().filter((win) => {
+      try {
+        return !win.isDestroyed();
+      } catch {
+        return false;
+      }
+    });
   } catch {
     return [];
   }
 }
 
-/** 每个窗口开屏前的状态，播完恢复。 */
-const windowState = new WeakMap();
+const windowStateMap = new WeakMap();
 
-function enterSplashWindow(electron, fullscreen) {
-  const dark = electron.nativeTheme?.shouldUseDarkColors !== false;
+function enterSplashWindow(electron, wantFullscreen = true) {
   for (const win of targetWindows(electron)) {
-    if (!windowState.has(win)) {
-      windowState.set(win, { fullscreen: win.isFullScreen?.() === true });
-    }
-    const state = windowState.get(win);
-    if (fullscreen && !state.fullscreen) {
-      try {
-        win.setFullScreen(true);
-      } catch {
-        /* 忽略 */
-      }
-    }
     try {
-      // 黑色按钮 + 黑色底：和开屏的纯黑背景融为一体
-      win.setTitleBarOverlay?.({ color: '#000000', symbolColor: '#000000', height: 40 });
+      if (!windowStateMap.has(win)) {
+        windowStateMap.set(win, {
+          fullscreen: win.isFullScreen(),
+          titleBarStyle: win.getTitleBarStyle ? win.getTitleBarStyle() : undefined,
+        });
+      }
+      try {
+        win.setTitleBarOverlay({ color: '#000000', symbolColor: '#000000', height: 0 });
+      } catch {
+        /* titleBarOverlay 在非 win32 或未开启时不生效，忽略 */
+      }
+      if (wantFullscreen && !win.isFullScreen()) {
+        try {
+          win.setFullScreen(true);
+        } catch {
+          /* noop */
+        }
+      }
     } catch {
-      /* 非 Windows / 无 overlay 时忽略 */
+      /* noop */
     }
-    state.symbolColor = dark ? '#f9fafb' : '#0f1115';
   }
 }
 
 function leaveSplashWindow(electron) {
   for (const win of targetWindows(electron)) {
-    const state = windowState.get(win);
-    if (!state) continue;
-    windowState.delete(win);
     try {
-      win.setTitleBarOverlay?.({
-        color: '#00000000',
-        symbolColor: state.symbolColor || '#f9fafb',
-        height: 40,
-      });
-    } catch {
-      /* 忽略 */
-    }
-    if (state.fullscreen !== true && win.isFullScreen?.()) {
+      const saved = windowStateMap.get(win);
       try {
-        win.setFullScreen(false);
+        win.setTitleBarOverlay({ color: '#00000000', symbolColor: '#e0e0e0', height: 32 });
       } catch {
-        /* 忽略 */
+        /* noop */
       }
+      if (saved && typeof saved.fullscreen === 'boolean') {
+        try {
+          if (win.isFullScreen() !== saved.fullscreen) {
+            win.setFullScreen(saved.fullscreen);
+          }
+        } catch {
+          /* noop */
+        }
+      }
+      windowStateMap.delete(win);
+    } catch {
+      /* noop */
     }
   }
 }
 
 export function apply(ctx) {
-  const webServer = ctx.webServer;
+  const { webServer } = ctx;
   if (!webServer || typeof webServer.register !== 'function') return () => {};
 
   const disposers = [];
 
-  // 音轨：Range 支持（audio 标签会先发 Range 探测）。
+  // 1. 音轨
   disposers.push(
     webServer.register({
       kind: 'exact',
       path: `${BASE}/audio`,
+      handler: (req, res) => serveRangeFile(AUDIO_FILE, 'audio/mp4', req, res),
+    }),
+  );
+
+  // 2. 视频流（支持 ?theme=xxx 参数）
+  disposers.push(
+    webServer.register({
+      kind: 'exact',
+      path: `${BASE}/video`,
       handler: (req, res) => {
-        if (req.method !== 'GET' && req.method !== 'HEAD') {
-          sendJson(res, 405, { error: 'method_not_allowed' });
-          return;
-        }
-        if (!existsSync(AUDIO_FILE)) {
-          sendJson(res, 404, { error: 'audio_missing' });
-          return;
-        }
-        const total = statSync(AUDIO_FILE).size;
-        const range = req.headers.range;
-        res.setHeader('Content-Type', 'audio/mp4');
-        res.setHeader('Accept-Ranges', 'bytes');
-        res.setHeader('Cache-Control', 'no-store');
-        if (range) {
-          const match = /^bytes=(\d*)-(\d*)$/.exec(String(range));
-          if (match) {
-            const start = match[1] === '' ? total - Number(match[2]) : Number(match[1]);
-            const end = match[2] === '' || match[1] === '' ? total - 1 : Number(match[2]);
-            if (start >= 0 && end >= start && start < total) {
-              res.statusCode = 206;
-              res.setHeader('Content-Range', `bytes ${start}-${end}/${total}`);
-              res.setHeader('Content-Length', String(end - start + 1));
-              if (req.method === 'HEAD') res.end();
-              else createReadStream(AUDIO_FILE, { start, end }).pipe(res);
-              return;
-            }
+        try {
+          const urlObj = new URL(req.url, 'http://127.0.0.1');
+          const theme = urlObj.searchParams.get('theme') || readSettings().theme;
+          const videoPath = resolveVideoPath(theme);
+          if (!videoPath) {
+            sendJson(res, 404, { error: 'no_video_found', searched: theme });
+            return;
           }
-          res.statusCode = 416;
-          res.setHeader('Content-Range', `bytes */${total}`);
-          res.end();
-          return;
+          const cType = videoPath.endsWith('.webm') ? 'video/webm' : 'video/mp4';
+          serveRangeFile(videoPath, cType, req, res);
+        } catch (e) {
+          sendJson(res, 500, { error: String(e) });
         }
-        res.setHeader('Content-Length', String(total));
-        if (req.method === 'HEAD') res.end();
-        else createReadStream(AUDIO_FILE).pipe(res);
       },
     }),
   );
 
-  // 设置读写（GET 读，PUT/POST 存；webserver 不允许同路径重复注册，所以合并）。
+  // 3. 视频主题列表
+  disposers.push(
+    webServer.register({
+      kind: 'exact',
+      path: `${BASE}/videos`,
+      handler: (req, res) => {
+        sendJson(res, 200, {
+          videos: listAvailableVideos(),
+          userDir: USER_VIDEOS_DIR,
+        });
+      },
+    }),
+  );
+
+  // 4. 设置读写
   disposers.push(
     webServer.register({
       kind: 'exact',
@@ -253,7 +363,7 @@ export function apply(ctx) {
     }),
   );
 
-  // 开屏窗口效果：隐藏右上角窗口按钮（必要时全屏），播完恢复。
+  // 5. 窗口效果
   disposers.push(
     webServer.register({
       kind: 'exact',
@@ -281,17 +391,24 @@ export function apply(ctx) {
     }),
   );
 
+  // 6. 健康检查
   disposers.push(
     webServer.register({
       kind: 'exact',
       path: `${BASE}/health`,
-      handler: (req, res) =>
+      handler: (req, res) => {
+        const settings = readSettings();
+        const curVideo = resolveVideoPath(settings.theme);
         sendJson(res, 200, {
           ok: true,
           plugin: 'dsh-whale-splash',
           audio: existsSync(AUDIO_FILE),
-          audioBytes: existsSync(AUDIO_FILE) ? statSync(AUDIO_FILE).size : 0,
-        }),
+          video: Boolean(curVideo && existsSync(curVideo)),
+          videoPath: curVideo,
+          theme: settings.theme,
+          userVideosDir: USER_VIDEOS_DIR,
+        });
+      },
     }),
   );
 
@@ -301,7 +418,7 @@ export function apply(ctx) {
         try {
           if (typeof dispose === 'function') dispose();
         } catch {
-          /* 卸载期清理失败忽略 */
+          /* noop */
         }
       }
     });

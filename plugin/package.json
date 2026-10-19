@@ -1,6 +1,6 @@
 {
   "name": "dsh-whale-splash",
-  "version": "1.1.1",
+  "version": "1.2.0",
   "description": "DeepSeek 开屏动画：打开 DSH 时播放 HARNESS OS 开机过场（鲸鱼标志 → 访问许可 → 身份确认 → 读取权限 → 核验通过 → WELCOME），带 HUD、打字机、进度与核验圆环。",
   "type": "module",
   "main": "index.js",
