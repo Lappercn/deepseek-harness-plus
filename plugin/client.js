@@ -971,38 +971,20 @@ window.__ModuleLoader__.load({
       const playPromise = video.play();
       if (playPromise && typeof playPromise.then === "function") {
         playPromise.then(() => {
-          // 播放成功了，立刻尝试取消静音
           if (cfg.sound) {
             video.muted = false;
             video.volume = cfg.volume !== undefined ? cfg.volume : 0.75;
-          }
-          // 视频已经在播了，现在安全地触发全屏（延迟 300ms 让播放稳定）
-          if (cfg.fullscreen) {
-            setTimeout(() => {
-              if (!state.finished) {
-                fetch("/whale-splash/window", {
-                  method: "POST",
-                  headers: { "Content-Type": "application/json" },
-                  body: JSON.stringify({ mode: "splash", fullscreen: true }),
-                })
-                  .then((res) => (res.ok ? res.json() : { electron: false }))
-                  .then((info) => {
-                    if (info && info.electron) state.hostWindow = true;
-                  })
-                  .catch(() => {});
-              }
-            }, 300);
           }
         }).catch(() => {});
       }
 
       document.body.appendChild(overlay);
 
-      // 请求深色标题栏（全屏操作延迟到视频播放成功后触发）
+      // 直接请求全屏
       void fetch("/whale-splash/window", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ mode: "splash", fullscreen: false }),
+        body: JSON.stringify({ mode: "splash", fullscreen: cfg.fullscreen === true }),
       })
         .then((res) => (res.ok ? res.json() : { electron: false }))
         .then((info) => {
