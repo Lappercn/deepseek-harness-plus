@@ -958,38 +958,58 @@ window.__ModuleLoader__.load({
         finish("click");
       });
 
+      // 自动播放与超时保护
+      let hasEndedOrProgressed = false;
+      video.addEventListener("timeupdate", () => {
+        if (video.currentTime > 0.1) hasEndedOrProgressed = true;
+      });
+
+      // 兜底超时安全机制：如果视频卡住超过 16 秒，或者出现任何不可恢复的错误，自动淡出进入主界面，绝不卡死
+      const maxTimeout = setTimeout(() => {
+        finish("timeout_safety");
+      }, 16500);
+      state.timers.push(maxTimeout);
+
       video.addEventListener("ended", () => {
         finish("video_ended");
       });
 
-      video.addEventListener("error", () => {
-        console.warn("[whale-splash] video error, finishing");
+      video.addEventListener("error", (e) => {
+        console.warn("[whale-splash] video playback error:", e);
         finish("video_error");
       });
 
-      // 尝试自动播放（处理可能的手势限制）
-      const unmuteAndPlay = () => {
-        if (cfg.sound) video.muted = false;
+      const playVideoSafely = () => {
+        video.muted = !cfg.sound;
         video.volume = cfg.volume !== undefined ? cfg.volume : 0.75;
         const p = video.play();
-        if (p && typeof p.catch === "function") p.catch(() => {});
+        if (p && typeof p.catch === "function") {
+          p.catch((err) => {
+            console.warn("[whale-splash] unmuted play blocked, trying muted play:", err);
+            video.muted = true;
+            video.play().catch(() => {});
+
+            // 用户一旦有任何交互立刻解静音
+            const unmuteOnInteraction = () => {
+              if (cfg.sound) video.muted = false;
+              video.volume = cfg.volume !== undefined ? cfg.volume : 0.75;
+              window.removeEventListener("pointerdown", unmuteOnInteraction, true);
+              document.removeEventListener("keydown", unmuteOnInteraction, true);
+            };
+            window.addEventListener("pointerdown", unmuteOnInteraction, true);
+            document.addEventListener("keydown", unmuteOnInteraction, true);
+          });
+        }
       };
 
-      const playPromise = video.play();
-      if (playPromise && typeof playPromise.catch === "function") {
-        playPromise.catch(() => {
-          // 如果带声音自动播放被浏览器拦截，先静音启动，等用户交互（按键或点击）时立即恢复声音
-          video.muted = true;
-          video.play().catch(() => {});
-
-          const kick = () => {
-            unmuteAndPlay();
-            window.removeEventListener("pointerdown", kick, true);
-            document.removeEventListener("keydown", kick, true);
-          };
-          window.addEventListener("pointerdown", kick, true);
-          document.addEventListener("keydown", kick, true);
-        });
+      if (video.readyState >= 2) {
+        playVideoSafely();
+      } else {
+        video.addEventListener("canplay", () => playVideoSafely(), { once: true });
+        // 500ms 后强制尝试触发一次播放
+        setTimeout(() => {
+          if (video.paused) playVideoSafely();
+        }, 500);
       }
 
       document.body.appendChild(overlay);
