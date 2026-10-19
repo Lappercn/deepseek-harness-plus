@@ -119,20 +119,6 @@ function resolveVideoPath(themeName) {
   return null;
 }
 
-function resolveWavPath(themeName) {
-  if (themeName) {
-    const base = basename(themeName, extname(themeName));
-    const candidates = [
-      join(USER_VIDEOS_DIR, `${base}.wav`),
-      join(ASSETS_DIR, `${base}.wav`),
-    ];
-    for (const c of candidates) {
-      if (existsSync(c) && statSync(c).isFile()) return c;
-    }
-  }
-  return null;
-}
-
 function listAvailableVideos() {
   const result = [
     { id: 'default', label: '🐳 经典科技蓝鲸 (HARNESS OS 自检)', isVideo: false },
@@ -385,7 +371,7 @@ export function apply(ctx) {
     }),
   );
 
-  // 5. 窗口效果与原生音效播放
+  // 5. 窗口效果
   disposers.push(
     webServer.register({
       kind: 'exact',
@@ -398,33 +384,6 @@ export function apply(ctx) {
         try {
           const payload = JSON.parse(await readBody(req));
           const electron = electronBridge();
-
-          // 在 Windows 上播放原生音效（彻底解决 Electron 浏览器自动播放声音策略拦截与卡顿）
-          if (process.platform === 'win32') {
-            try {
-              const soundScript = join(__dirname, 'scripts', 'win-sound.ps1');
-              if (existsSync(soundScript)) {
-                const { spawn } = await import('node:child_process');
-                if (payload.mode === 'splash' && payload.sound !== false) {
-                  const settings = readSettings();
-                  const reqTheme = payload.theme || settings.theme;
-                  const wavPath = resolveWavPath(reqTheme);
-                  if (wavPath && existsSync(wavPath)) {
-                    spawn('powershell.exe', ['-NoProfile', '-ExecutionPolicy', 'Bypass', '-File', soundScript, '-action', 'play', '-wav', wavPath], {
-                      detached: true,
-                      stdio: 'ignore',
-                    });
-                  }
-                } else if (payload.mode === 'restore') {
-                  spawn('powershell.exe', ['-NoProfile', '-ExecutionPolicy', 'Bypass', '-File', soundScript, '-action', 'stop'], {
-                    detached: true,
-                    stdio: 'ignore',
-                  });
-                }
-              }
-            } catch {}
-          }
-
           if (!electron) {
             // Windows native fullscreen fallback via win-fullscreen.ps1 to cover taskbar
             if (process.platform === 'win32') {
