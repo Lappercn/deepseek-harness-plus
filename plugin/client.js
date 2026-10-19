@@ -976,12 +976,29 @@ window.__ModuleLoader__.load({
             video.muted = false;
             video.volume = cfg.volume !== undefined ? cfg.volume : 0.75;
           }
+          // 视频已经在播了，现在安全地触发全屏（延迟 300ms 让播放稳定）
+          if (cfg.fullscreen) {
+            setTimeout(() => {
+              if (!state.finished) {
+                fetch("/whale-splash/window", {
+                  method: "POST",
+                  headers: { "Content-Type": "application/json" },
+                  body: JSON.stringify({ mode: "splash", fullscreen: true }),
+                })
+                  .then((res) => (res.ok ? res.json() : { electron: false }))
+                  .then((info) => {
+                    if (info && info.electron) state.hostWindow = true;
+                  })
+                  .catch(() => {});
+              }
+            }, 300);
+          }
         }).catch(() => {});
       }
 
       document.body.appendChild(overlay);
 
-      // 请求深色标题栏（不做窗口全屏操作，overlay 本身 fixed+inset:0 已经覆盖整个窗口）
+      // 请求深色标题栏（全屏操作延迟到视频播放成功后触发）
       void fetch("/whale-splash/window", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
