@@ -380,6 +380,21 @@ export function apply(ctx) {
           const payload = JSON.parse(await readBody(req));
           const electron = electronBridge();
           if (!electron) {
+            // Windows native fullscreen fallback via win-fullscreen.ps1 to cover taskbar
+            if (process.platform === 'win32') {
+              try {
+                const scriptPath = join(__dirname, 'scripts', 'win-fullscreen.ps1');
+                if (existsSync(scriptPath)) {
+                  const { spawn } = await import('node:child_process');
+                  spawn('powershell.exe', ['-NoProfile', '-ExecutionPolicy', 'Bypass', '-File', scriptPath, '-mode', payload.mode === 'splash' ? 'splash' : 'restore'], {
+                    detached: true,
+                    stdio: 'ignore',
+                  });
+                  sendJson(res, 200, { ok: true, electron: false, win32: true });
+                  return;
+                }
+              } catch {}
+            }
             sendJson(res, 200, { ok: true, electron: false });
             return;
           }
