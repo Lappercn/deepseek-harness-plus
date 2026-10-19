@@ -988,12 +988,21 @@ window.__ModuleLoader__.load({
       })
         .then((res) => (res.ok ? res.json() : { electron: false }))
         .then((info) => {
-          if (info && info.electron) {
+          if (info && info.ok && (info.electron || info.win32)) {
             state.hostWindow = true;
+            // If ESC/ended ran while the host was entering fullscreen, restore immediately.
+            if (state.finished) {
+              void fetch("/whale-splash/window", {
+                method: "POST", headers: { "Content-Type": "application/json" },
+                body: JSON.stringify({ mode: "restore" }), keepalive: true,
+              }).catch((error) => console.warn("[whale-splash] restore failed", error));
+            }
+          } else if (cfg.fullscreen) {
+            console.warn("[whale-splash] fullscreen unavailable", info);
           }
           return null;
         })
-        .catch(() => {});
+        .catch((error) => console.warn("[whale-splash] fullscreen failed", error));
 
       current = state;
       return state;
