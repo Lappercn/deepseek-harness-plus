@@ -1,14 +1,14 @@
 <div align="center">
 
-# 🐳 DeepSeek Harness 皮肤
+# 🐳 DeepSeek Harness 皮肤 · 超燃开机动画 & 管理中心
 
-**HARNESS OS 开机动画 —— 打开 DSH，先看一场 16 秒的开机自检**
+**HARNESS OS 开机动画 —— 原生超燃 15 秒机能流光视频 · 实时小窗预览 · 跃数AI 中转站特惠直达**
 
-`v1.1.1` · `Windows` · `MIT` · 作者 **抖音 @孤影**
+`v1.2.0` · `Windows` · `MIT` · 作者 **抖音 @孤影**
 
+<br>
 
-<img src="docs/preview.png" alt="DeepSeek Harness 皮肤 · 开屏动画预览" width="100%">
-
+<img src="docs/video_preview.jpg" alt="DeepSeek Harness 超燃开机动画效果预览" width="100%">
 
 </div>
 
@@ -16,40 +16,71 @@
 
 ## ✨ 这是什么
 
-一个 **DeepSeek Harness（DSH）皮肤**：每次启动 DSH，先播一段电影感的开机过场 —— 鲸鱼标志亮起 → 需要访问许可 → 身份资料确认 → 接收访问需求 → 读取权限 → 核验通过 → `WELCOME TO HARNESS OS`，然后才进入主界面。
+一个专为 **DeepSeek Harness（DSH）** 打造的高颜值沉浸式开机动画皮肤与管理系统：
+每次启动 DSH，都会先展示一段极具未来科技感与电影级视觉冲击的开机过场，随后自然淡出并无缝进入 DSH 主工作区。
 
-黑底 HUD、四角边框、等宽小字、英文打字机、读取条、核验圆环、背景音轨一应俱全；开屏期间自动全屏并隐藏右上角那几个白色窗口按钮，播完原样恢复。
+在 `v1.2.0` 版本中，不仅支持了**原汁原味的 15 秒超燃机能流光视频**，还重构上线了全新的**图形化管理控制面板**（支持实时小窗预览、多主题一键切换、一键打开本地视频换源目录），并深度集成了 **跃数AI 中转站 (ys666.site)** 官方特惠入口！
 
-> 皮肤只改「开机动画」这一件事，**不碰你的聊天记录、模型配置和 API Key**。
-![输入图片说明](docs/image.png)
----
-
-## 🎬 效果
-
-| 时间 | 画面 |
-| :---: | --- |
-| `0.5s` | 🐳 鲸鱼 Logo 浮现 · 深度求索 / DEEPSEEK |
-| `3.9s` | 需要访问许可 —— 英文打字机逐字出现，按钮淡入 |
-| `7.3s` | 身份资料确认 —— 访问姓名 **跃数**、权限 `ADMIN`、验证码逐字输入 |
-| `9.9s` | 接收访问需求 |
-| `10.9s` | 开始读取权限 —— 进度条 0.9 秒跑满 |
-| `11.9s` | 读取完毕 · 核验通过 —— 圆环 1.5 秒画完 |
-| `14.3s` | `WELCOME TO HARNESS OS` |
-| `16.2s` | 淡出，进入主界面 |
+> 皮肤只负责「开机过场」与「视觉呈现」，**绝不触碰你的模型配置、聊天记录或 API Key**。
 
 ---
 
-> ### 🚀 跃数AI
+## 🎛️ 全新管理界面预览 (设置 → 开屏动画)
+
+全新的设置控制面板采用赛博暗黑极光美学，功能一目了然：
+
+<div align="center">
+  <img src="docs/settings_preview.png" alt="全新开屏动画与跃数AI管理面板" width="85%">
+</div>
+
+### 🌟 核心管理特性：
+1. **🚀 跃数AI 中转站 (ys666.site) 专属特惠中心**：
+   - 官方千人专线，注册即送免费额度，折上折充值优惠；
+   - 支持一键直达官网、一键复制官网链接。
+2. **🎬 实时效果小窗预览（所见即所得）**：
+   - 在设置面板中即可直接循环预览视频动画；
+   - 独立的小窗原声静音/开启控制，无需全屏即可感知视觉与听觉效果。
+3. **🎨 现代卡片式风格选择器**：
+   - 网格化大卡片切换，高亮状态指示。
+4. **📂 DIY 极速一键打开视频目录**：
+   - 点击「一键打开视频目录」直接呼出 Windows 资源管理器，拖入视频一秒生效。
+
+---
+
+## 🎬 内置开机动画主题
+
+在 DSH **设置 → 开屏动画** 中即可一键无缝切换：
+
+| 主题名称 | 风格类型 | 时长与特点 | 推荐度 |
+| :--- | :---: | :--- | :---: |
+| 🔥 **超燃写轮眼** *(默认推荐)* | 1080P 超燃视频 | **15.0 秒平滑循环** · 黑红机能流光 + 重低音原声 + 尾部音画淡出 | ⭐⭐⭐⭐⭐ (极度震撼) |
+| ❄️ **苍天之瞳** | 720P 苍眸视频 | **15.0 秒平滑循环** · 五条悟六眼苍眸 + 赛博机能面罩标 (无量空处) | ⭐⭐⭐⭐⭐ (利落帅气) |
+| 🐳 **经典科技蓝鲸** | 纯 CSS/SVG 代码 | **16.0 秒电影自检** · 鲸鱼亮起 → 访问许可 → 身份确认 → 读取 → WELCOME | ⭐⭐⭐⭐ (原汁原味极客) |
+| 🎬 **自定义本地视频** | 本地视频 DIY | 放入任意 `.mp4` 即可自动识别，自由打造属于你的个性开机动画 | ⭐⭐⭐⭐⭐ (自由度 100%) |
+
+<br>
+
+<div align="center">
+  <img src="docs/preview.png" alt="经典蓝鲸四幕定格效果" width="85%">
+  <p><em>（附：经典科技蓝鲸纯代码动画定格）</em></p>
+</div>
+
+---
+
+> ### 🚀 跃数AI中转站 · 稳定运行中的千人 AI 中转站
 >
-> 极具未来科技感的开屏视觉体验，专为 DeepSeek Harness 深度定制。
+> **一个 Key，接入 DeepSeek / GLM / Kimi / MiniMax / Claude / GPT 等全网主流大模型。**
+> 长期稳定 · 超低延迟 · 不掉线 —— 无论跑 Agent、写代码、打比赛还是日常办公，一个中转全部搞定！
+>
+> 👉 **[立即访问 ys666.site](https://ys666.site)**
 
 ---
 
-## 🚀 安装
+## 🚀 安装方法
 
-### 方法一 · 把仓库地址丢给 AI（最省事）
+### 方法一 · 把仓库地址丢给 AI 助手（最省事，推荐）
 
-复制下面这段话，发给任意 AI —— DSH 里的 AI、Claude、ChatGPT、Codex 都可以：
+复制下面这段话，发给你正在使用的任意 AI（DSH 内置 AI、Claude、Cursor、ChatGPT 均可）：
 
 ```text
 帮我安装这个 DeepSeek Harness 皮肤：
@@ -61,29 +92,24 @@ https://gitee.com/leapai/deepseek-harness-plus.git
 4. 装完告诉我怎么重启 DSH 才能看到开机动画。
 ```
 
-AI 会自己完成「克隆 → 找 dsh → 安装」，你只需要按它说的重启 DSH。
+---
 
-> 仓库根目录带了一份 [`AGENTS.md`](AGENTS.md)，专门写给 AI 看，它读完就知道该怎么做，不用你多解释。
-
-### 方法二 · 双击安装（三步）
+### 方法二 · 双击安装（新手首选，仅需三步）
 
 **① 下载仓库**
-
-在仓库首页点绿色的 **「克隆/下载」→「下载 ZIP」**，解压到一个固定文件夹（例如 `D:\DSH皮肤\deepseek-harness-plus`）。
-
-> ⚠️ 一定要先**解压**，不要在压缩包里直接双击运行。
+在 Gitee 页面点击 **「克隆/下载」→「下载 ZIP」**，解压到任意文件夹。
 
 **② 双击 `一键安装.bat`**
-
-脚本会自动找到你的 DSH → 选择配置（profile）→ 安装。看到绿色的「安装完成」即成功。
+脚本会自动寻找你的 DSH 安装目录，自动完成插件注入。看到绿色的「安装完成」即成功。
 
 **③ 完全退出 DSH，再重新打开**
+关掉主窗口后，在 Windows 右下角**系统托盘**右键 DSH 图标选择「退出」，然后重新打开即可！
 
-关掉主窗口后，还要到右下角**系统托盘**右键图标退出，然后重新打开 —— 开机动画就会播放。
+---
 
-> 💡 不重启不生效，这是所有插件的通用规则。
+### 方法三 · 终端命令行安装
 
-### 方法三 · 命令行
+以管理员或普通权限打开 PowerShell：
 
 ```powershell
 git clone https://gitee.com/leapai/deepseek-harness-plus.git
@@ -91,143 +117,34 @@ cd deepseek-harness-plus
 powershell -NoProfile -ExecutionPolicy Bypass -File .\install.ps1
 ```
 
-常用参数：
-
-```powershell
-# 装到 web profile（浏览器里跑的那种）
-.\install.ps1 -Profile web
-
-# DSH 装在自定义 / 便携目录时，手动指定 dsh.cmd
-.\install.ps1 -Dsh "D:\deepseek\resources\runtime\cli\bin\dsh.cmd"
-```
-
-### 装不上？看这里
-
-| 现象 | 原因 & 解决 |
-| --- | --- |
-| 双击后黑窗口一闪就没 | 手动跑一次就能看到原因：`powershell -NoProfile -ExecutionPolicy Bypass -File .\install.ps1` |
-| 提示「没找到 dsh 命令」 | DSH 装在非默认位置，用 `-Dsh "你的路径\resources\runtime\cli\bin\dsh.cmd"` 指定即可 |
-| 装完没动画 | 99% 是没真正重启（托盘也要退），其次看设置里「启用开屏动画」是否打开 |
-
-> `dsh.cmd` 在哪？就在你安装 DSH 的目录里，路径特征是 `…\resources\runtime\cli\bin\dsh.cmd`。
+> **便携版用户（Portable）**：若你的 DSH 装在自定义目录（如 `D:\deepseek`），指定 CLI 即可：
+> ```powershell
+> powershell -NoProfile -ExecutionPolicy Bypass -File .\install.ps1 -Dsh "D:\deepseek\resources\runtime\cli\bin\dsh.cmd"
+> ```
 
 ---
 
-## 🎮 播放时怎么玩
+## 🎥 如何 DIY 添加自己的新视频动画？
 
-| 操作 | 效果 |
-| --- | --- |
-| **点击屏幕** | 立即推进到下一幕 |
-| **按 `Esc`** | 立刻结束开屏，进主界面 |
-| 点右下角「跳过开屏 ESC」 | 同上 |
-| 什么都不做 | 16 秒后自动结束 |
+不需要重新打包代码，任何人都能一秒换成自己的动漫/游戏剪辑视频：
 
-**只播一次**：同一个窗口里只播一次 —— F5 刷新、断线重连、界面热更新都不会重播；关掉 DSH 再打开才会再播。
-
-想立刻再看一遍：「设置 → 开屏动画 → **立即重播**」。
-
----
-
-## ⚙️ 设置
-
-路径：DSH 里点 **设置 → 开屏动画**。
-
-| 设置项 | 说明 | 建议 |
-| --- | --- | --- |
-| **启用开屏动画** | 总开关，关掉直接进主界面 | 演示开，嫌烦就关 |
-| **播放声音** | 是否播背景音轨 | 办公室建议关 |
-| **音量** | 0–100% | 60% 左右 |
-| **开屏时全屏** | 开屏期间真全屏，播完恢复窗口 | 想沉浸就开 |
-| **显示跳过提示** | 右下角「跳过开屏 ESC」；Logo 那一幕不显示 | 建议开 |
-| **开屏长度** | **完整开屏**（约 16 秒）/ **仅 Logo**（约 4 秒） | 天天用建议「仅 Logo」 |
-| **立即重播 / 恢复默认** | 预览整段动画 / 一键还原 | — |
-
-设置保存在 `C:\Users\你的用户名\.dsh-whale-splash\config.json`，重启不丢。
-
----
-
-## 🎵 换成自己的音乐
-
-默认音轨是插件自带的合成氛围音（无版权问题）。换成自己的 BGM：
-
-1. 把音频转成 **m4a**（格式工厂 / 剪映 / 在线转换都行），重命名为 **`splash.m4a`**；
-2. 覆盖到（把 `你的用户名` 换成自己的）：
-
+1. 打开 DSH **设置 → 开屏动画**，在「DIY 本地视频换源教程」卡片中点击 **「📂 一键打开视频目录」**；
+2. 此时 Windows 资源管理器会自动弹出用户视频文件夹：
+   ```text
+   C:\Users\你的用户名\.dsh-whale-splash\videos\
    ```
-   C:\Users\你的用户名\.dsh\profiles\desktop\node_modules\dsh-whale-splash\assets\splash.m4a
-   ```
-
-   > 找不到 `.dsh`？它是隐藏文件夹，在资源管理器地址栏直接粘贴上面这行路径回车即可。
-
-3. 重启 DSH 生效。
-
-时长没有硬限制，但动画只有 16 秒，建议把高潮剪进前 16 秒。
-
----
-
-## ✏️ 把「跃数」改成你自己的名字
-
-开屏第三幕「身份资料确认」里的访问姓名默认是 **跃数**，改成你自己的名字很简单：
-
-1. 用记事本 / VS Code 打开 `plugin\client.js`，搜索 `访问姓名`：
-
-   ```js
-   '<div class="k">访问姓名</div><div class="v">跃数</div>' +
-   ```
-
-2. 把 `跃数` 改成你的名字（2–6 个字最好看），保存；
-3. 重新打包并重装：
-
-   ```powershell
-   cd "你的仓库目录"
-   Copy-Item plugin -Destination package -Recurse
-   tar -czf release\dsh-whale-splash-1.1.1.tgz package
-   Remove-Item package -Recurse
-   powershell -NoProfile -ExecutionPolicy Bypass -File .\install.ps1
-   ```
-
-   > 图快也可以直接改**已安装**的那份，不用重新打包：
-   > `C:\Users\你的用户名\.dsh\profiles\desktop\node_modules\dsh-whale-splash\client.js`
-
-4. 重启 DSH。
-
-颜色、字号、文案同理 —— 全在 `plugin\client.js` 里（搜 `ws-title`、`ws-phase`、`injectCss`）。
+3. 把你准备好的任意 `.mp4` 或 `.webm` 格式视频丢进去（如 `genshin.mp4`、`cyberpunk.mp4`）；
+4. 切换一下设置面板，在「选择开机动画风格」中**会自动出现你新增的视频卡片**，点击即可在上方小窗预览并选定！
 
 ---
 
 ## 🗑️ 卸载
 
+随时可以完全卸载，恢复 DSH 原始默认状态：
+
 ```powershell
-& "你的路径\resources\runtime\cli\bin\dsh.cmd" plugin --profile desktop remove dsh-whale-splash
+& "你的DSH路径\resources\runtime\cli\bin\dsh.cmd" plugin --profile desktop remove dsh-whale-splash
 ```
-
-然后在 DSH 里 **设置 → 插件** 确认 `dsh-whale-splash` 已消失；想彻底清净，再删掉配置文件夹 `C:\Users\你的用户名\.dsh-whale-splash`，重启即可。
-
----
-
-## ❓ 常见问题
-
-**Q：没有声音？**
-检查设置里「播放声音」和音量；浏览器策略可能拦截自动播放，开屏后随便点一下屏幕声音就出来了。
-
-**Q：每次等 16 秒太久了。**
-设置里把「开屏长度」改成 **仅 Logo**（约 4 秒），或直接关掉；播放时随时按 `Esc`。
-
-**Q：开屏变全屏会卡吗？**
-播完自动恢复窗口，不会改变原来的窗口状态；不喜欢就关掉「开屏时全屏」。
-
-**Q：会不会影响聊天记录 / 模型配置 / API Key？**
-不会。皮肤只注册 3 个本地接口（音轨、设置、窗口效果），不联网、不读取会话内容。
-
-**Q：macOS / Linux 能用吗？**
-动画本体是网页实现，跨平台可用；一键脚本是 Windows PowerShell 写的。Mac 用户手动执行：
-
-```bash
-dsh plugin --profile desktop add "file:<仓库目录>/release/dsh-whale-splash-1.1.1.tgz"
-```
-
-**Q：更新了新版本？**
-下载新仓库覆盖旧文件夹，重新双击 `一键安装.bat`（覆盖安装），重启 DSH。你的设置和自定义音乐不受影响。
 
 ---
 
@@ -235,34 +152,35 @@ dsh plugin --profile desktop add "file:<仓库目录>/release/dsh-whale-splash-1
 
 ```
 deepseek-harness-plus/
-├─ README.md                        ← 你正在看的这份说明
-├─ CHANGELOG.md                     ← 更新日志
-├─ AGENTS.md                        ← 写给 AI 的安装说明（丢给 AI 用）
-├─ 一键安装.bat                      ← 小白双击这个
-├─ install.ps1                      ← 安装脚本（支持官方版 / 便携版）
-├─ docs/preview.png                 ← 开屏四幕效果预览
+├─ README.md                        ← 完整说明、管理后台使用指南与 DIY 教程
+├─ CHANGELOG.md                     ← 版本更新日志
+├─ AGENTS.md                        ← 专供 AI Agent 解析的安装指南
+├─ 一键安装.bat                      ← 双击一键安装入口
+├─ install.ps1                      ← 跨路径智能检测 PowerShell 安装脚本
+├─ docs/                            ← 效果预览与管理后台截图
+│  ├─ settings_preview.png          ← 全新设置管理面板与特惠中心截图
+│  ├─ video_preview.jpg             ← 超燃红眸 15 秒视频开机效果图
+│  └─ preview.png                   ← 经典科技蓝鲸定格图
 ├─ release/
-│  └─ dsh-whale-splash-1.1.1.tgz    ← 打包好的皮肤
-└─ plugin/                          ← 源码（想改就改这里）
-   ├─ package.json                  ← 皮肤声明：bundle patch + 浏览器端入口
-   ├─ index.js                      ← 宿主端：音轨 / 设置 / 窗口效果
-   ├─ client.js                     ← 浏览器端：七幕动画、HUD、打字机、设置页
-   ├─ cordis.patch.yml              ← 把 whale-splash 挂进 DSH 配置树
-   └─ assets/                       ← 音轨、鲸鱼图形、版权说明
+│  └─ dsh-whale-splash-1.2.0.tgz    ← 包含完整双高清视频的预打包安装包
+└─ plugin/                          ← 皮肤完整源码
+   ├─ package.json                  ← 模块与 Patch 声明
+   ├─ index.js                      ← 宿主端：Range 视频流、健康探测、打开文件夹系统服务
+   ├─ client.js                     ← 浏览器端：管理面板UI、实时小窗播放器、HUD 渲染
+   ├─ cordis.patch.yml              ← DSH 挂载配置
+   └─ assets/                       ← 预制 15s 高画质视频与音频资产
 ```
 
 ---
 
 <div align="center">
 
-## 📄 关于
+## 📄 关于与致谢
 
-作者 **抖音 @孤影**　·　皮肤代码 [MIT](LICENSE) 开源，欢迎二改　·　版本变更见 [CHANGELOG.md](CHANGELOG.md)
+作者 **抖音 @孤影**　·　代码开源协议 [MIT](LICENSE)
 
-感谢 **跃数AI** 对本项目的支持
+感谢 **[跃数AI中转站 · ys666.site](https://ys666.site)** 对本项目的支持！
 
-鲸鱼图形取自 DeepSeek 官方标志（品牌标识），本项目与深度求索官方无关，不代表官方立场
-
-**如果这个皮肤让你每次打开 DSH 都心情不错，去抖音点个关注吧 ✨**
+**如果这个超燃皮肤让你每次打开 DSH 都眼前一亮，欢迎在抖音点个关注 ✨**
 
 </div>
