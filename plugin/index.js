@@ -36,6 +36,7 @@ export const DEFAULTS = Object.freeze({
   theme: 'red_eyes', // 'default' (SVG动画) | 'red_eyes' | 'blue_eyes' | 自定义视频文件名
   fullscreen: true,
   showHint: true,
+  customText: '跃数AI',
 });
 
 const clamp = (value, min, max, fallback) => {
@@ -56,6 +57,7 @@ export function normalizeSettings(input, base = DEFAULTS) {
     volume: clamp(src.volume, 0, 1, merged.volume),
     holdMs: clamp(src.holdMs, 1200, 8000, merged.holdMs),
     showHint: typeof src.showHint === 'boolean' ? src.showHint : merged.showHint,
+    customText: typeof src.customText === 'string' ? src.customText.trim() : (merged.customText || '跃数AI'),
   };
 }
 

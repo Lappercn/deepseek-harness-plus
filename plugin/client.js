@@ -33,6 +33,7 @@ window.__ModuleLoader__.load({
       sound: true,
       volume: 0.75,
       showHint: true,
+      customText: "跃数AI",
     };
 
     const clamp = (value, min, max) => Math.min(max, Math.max(min, value));
@@ -48,6 +49,7 @@ window.__ModuleLoader__.load({
         sound: typeof src.sound === "boolean" ? src.sound : merged.sound,
         volume: clamp(Number(src.volume) || 0, 0, 1) || merged.volume,
         showHint: typeof src.showHint === "boolean" ? src.showHint : merged.showHint,
+        customText: typeof src.customText === "string" ? src.customText.trim() : (merged.customText || "跃数AI"),
       };
     }
 
@@ -576,7 +578,7 @@ window.__ModuleLoader__.load({
       const overlay = document.createElement("div");
       overlay.className = "ws-cine";
       overlay.id = "dsh-whale-splash";
-      overlay.innerHTML = hudMarkup() + '<div class="ws-stage">' + phasesMarkup() + "</div>";
+      overlay.innerHTML = hudMarkup() + '<div class="ws-stage">' + phasesMarkup(cfg) + "</div>";
 
       if (cfg.showHint) {
         const skip = document.createElement("button");
@@ -871,6 +873,12 @@ window.__ModuleLoader__.load({
       video.src = "/whale-splash/video" + themeQuery;
 
       wrap.appendChild(video);
+
+      const customBadge = document.createElement("div");
+      customBadge.className = "ws-custom-brand-badge";
+      customBadge.textContent = cfg.customText || "跃数AI";
+      wrap.appendChild(customBadge);
+
       overlay.appendChild(wrap);
 
       if (cfg.showHint) {
@@ -1492,6 +1500,52 @@ window.__ModuleLoader__.load({
           }),
         ),
 
+        // 6.5 自定义开机显示文字/姓名/品牌
+        h(
+          "div",
+          { style: ui.card },
+          h(
+            "div",
+            { style: ui.row },
+            h(
+              "div",
+              null,
+              h("div", { style: ui.label }, "✏️ 开机动画显示文字 / 品牌名称"),
+              h("div", { style: ui.hint }, "自定义经典蓝鲸「访问姓名」或视频中的品牌悬浮标（支持中英文、任意个性网名）"),
+            ),
+          ),
+          h(
+            "div",
+            { style: { display: "flex", gap: 8, alignItems: "center" } },
+            h("input", {
+              type: "text",
+              value: state.customText || "",
+              placeholder: "例如：跃数AI / 你的专属昵称",
+              maxLength: 20,
+              style: {
+                flex: "1 1 auto",
+                padding: "8px 12px",
+                borderRadius: 10,
+                border: "1px solid var(--dsw-alias-border-l1, rgba(0,0,0,.15))",
+                background: "rgba(0,0,0,0.06)",
+                color: "inherit",
+                fontSize: 13,
+                outline: "none",
+              },
+              onChange: (e) => patch({ customText: e.target.value }),
+            }),
+            h(
+              "button",
+              {
+                type: "button",
+                style: ui.btn,
+                onClick: () => patch({ customText: "跃数AI" }),
+              },
+              "重置为跃数AI",
+            ),
+          ),
+        ),
+
         // 7. DIY 自定义视频教程与快速直达
         h(
           "div",
@@ -1530,8 +1584,8 @@ window.__ModuleLoader__.load({
         h(
           "div",
           { style: Object.assign({}, ui.footer, { textAlign: "center", marginTop: 8, display: "flex", flexDirection: "column", gap: 4 }) },
-          h("div", null, "🚀 官方直连支持：跃数AI (ys666.site) · 稳定运行千人站点"),
-          h("div", null, "开屏动画皮肤 · 作者：抖音 @孤影 · 遵循 MIT 开源协议"),
+          h("div", null, "🚀 作者：跃数AI (ys666.site) · 稳定运行千人站点"),
+          h("div", null, "开屏动画皮肤 · 1.0 灵感来源：抖音 @孤影 · 遵循 MIT 开源协议"),
         ),
       );
     }
