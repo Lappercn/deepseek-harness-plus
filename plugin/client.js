@@ -968,11 +968,22 @@ window.__ModuleLoader__.load({
       });
 
       // 尝试自动播放（处理可能的手势限制）
+      const unmuteAndPlay = () => {
+        if (cfg.sound) video.muted = false;
+        video.volume = cfg.volume !== undefined ? cfg.volume : 0.75;
+        const p = video.play();
+        if (p && typeof p.catch === "function") p.catch(() => {});
+      };
+
       const playPromise = video.play();
       if (playPromise && typeof playPromise.catch === "function") {
         playPromise.catch(() => {
+          // 如果带声音自动播放被浏览器拦截，先静音启动，等用户交互（按键或点击）时立即恢复声音
+          video.muted = true;
+          video.play().catch(() => {});
+
           const kick = () => {
-            video.play().catch(() => {});
+            unmuteAndPlay();
             window.removeEventListener("pointerdown", kick, true);
             document.removeEventListener("keydown", kick, true);
           };
