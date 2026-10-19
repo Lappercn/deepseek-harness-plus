@@ -385,20 +385,27 @@ export function apply(ctx) {
           const payload = JSON.parse(await readBody(req));
           const electron = electronBridge();
           if (!electron) {
-            // Windows native fullscreen fallback via win-fullscreen.ps1 to cover taskbar
+            if (!['splash', 'restore', 'inspect'].includes(payload.mode)) {
+              sendJson(res, 400, { ok: false, error: 'invalid_window_mode' });
+              return;
+            }
             if (process.platform === 'win32') {
-              try {
-                const scriptPath = join(HERE, 'scripts', 'win-fullscreen.ps1');
-                if (existsSync(scriptPath)) {
-                  const { spawn } = await import('node:child_process');
-                  spawn('powershell.exe', ['-NoProfile', '-ExecutionPolicy', 'Bypass', '-File', scriptPath, '-mode', payload.mode === 'splash' ? 'splash' : 'restore'], {
-                    detached: true,
-                    stdio: 'ignore',
+              if (payload.mode === 'splash' && payload.fullscreen !== true) {
+                sendJson(res, 200, { ok: true, electron: false, win32: false });
+                return;
+              }
+              const scriptPath = join(HERE, 'scripts', 'win-fullscreen.ps1');
+              const { execFile } = await import('node:child_process');
+              // Report success only after the script finishes and verifies the actual window bounds.
+              const result = await new Promise((resolve, reject) => {
+                execFile('powershell.exe', ['-NoProfile', '-NonInteractive', '-ExecutionPolicy', 'Bypass', '-File', scriptPath, '-mode', payload.mode],
+                  { windowsHide: true, timeout: 10000 }, (error, stdout, stderr) => {
+                    if (error) return reject(new Error((stdout || stderr || error.message).trim()));
+                    try { resolve(JSON.parse(stdout.trim())); } catch { reject(new Error('invalid_fullscreen_result')); }
                   });
-                  sendJson(res, 200, { ok: true, electron: false, win32: true });
-                  return;
-                }
-              } catch {}
+              });
+              sendJson(res, 200, { ...result, electron: false, win32: result.ok === true });
+              return;
             }
             sendJson(res, 200, { ok: true, electron: false });
             return;
